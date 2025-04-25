@@ -535,10 +535,6 @@ namespace QuestPatcher
                         // this coreMod is newer than the installed one
                         // don't allow core mod downgrade when checking against core mod json
                         
-                        await existingCoreMod.Uninstall(); // delete the current one
-                        await _modManager.DeleteMod(existingCoreMod);
-                        await _modManager.SaveMods();
-                        
                         missingCoreMods.Add(coreMod); // install the new one
                     }
                     else
