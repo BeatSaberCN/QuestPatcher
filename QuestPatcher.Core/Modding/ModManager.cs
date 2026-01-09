@@ -138,30 +138,25 @@ namespace QuestPatcher.Core.Modding
         {
             await mod.Provider.DeleteMod(mod);
         }
-        
-        public async Task<bool> DeleteAllMods()
+
+        public async Task DeleteAllMods()
         {
             Log.Warning("DELETING ALL MODS!");
-            bool succeeded = false;
-            try
+            // copy the list to prevent concurrent modification
+            foreach (var mod in AllMods.ToArray())
             {
-                // copy the list to prevent concurrent modification
-                foreach (var mod in AllMods.ToArray())
+                try
                 {
-                    // no need to uninstall it and check dependency, because we are deleting all mods anyways
+                    // no need to uninstall it and check dependency, because we are deleting all mods anyway
                     await DeleteMod(mod);
                 }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Failed to delete {Mod}", mod.Name);
+                }
             }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to delete all mods");
-            }
-            finally
-            {
-                await SaveMods();
-                succeeded = true;
-            }
-            return succeeded;
+
+            await SaveMods();
         }
 
         /// <summary>

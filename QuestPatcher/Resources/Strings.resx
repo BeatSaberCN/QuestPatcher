@@ -669,4 +669,7 @@ NOTE: If you see a restore app prompt inside your headset, just press close. The
   <data name="PatchingOption_MrcWorkaround" xml:space="preserve">
     <value>Enable MRC workaround</value>
   </data>
+  <data name="PatchingStage_CleanUpMods" xml:space="preserve">
+      <value>Cleanling up old mods</value>
+  </data>
 </root>

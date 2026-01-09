@@ -41,5 +41,7 @@ namespace QuestPatcher.Core.Models
         /// Path to a PNG file containing a custom splash screen.
         /// </summary>
         public string? CustomSplashPath { get; set; } = null;
+        
+        public bool CleanUpMods { get; set; } = true;
     }
 }

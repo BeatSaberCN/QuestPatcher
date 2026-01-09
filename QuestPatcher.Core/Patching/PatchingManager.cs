@@ -774,6 +774,12 @@ namespace QuestPatcher.Core.Patching
             // When repatching, certain mods may have been deleted when the app was uninstalled, so we will check for this
             await _modManager.UpdateModsStatus();
 
+            if (_config.PatchingOptions.CleanUpMods)
+            {
+                PatchingStage = PatchingStage.CleanUpMods;
+                await _modManager.DeleteAllMods();
+            }
+
             await _installManager.NewApkInstalled(_patchedApkPath);
 
             Log.Information("Patching complete!");

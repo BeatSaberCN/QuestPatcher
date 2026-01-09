@@ -554,4 +554,7 @@
     <data name="PatchingOption_BodyTracking" xml:space="preserve">
         <value>启用身体追踪</value>
     </data>
+  <data name="PatchingStage_CleanUpMods" xml:space="preserve">
+        <value>清理旧版Mod</value>
+    </data>
 </root>

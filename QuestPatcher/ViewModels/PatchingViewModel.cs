@@ -92,6 +92,21 @@ namespace QuestPatcher.ViewModels
                 }
             }
 
+            if (!Config.PatchingOptions.CleanUpMods)
+            {
+                var builder = new DialogBuilder
+                {
+                    Title = "清理Mod", 
+                    Text = "补丁选项 “清理Mod” 未启用\n这会跳过清理残留的旧版Mod导致游戏无法正常运行。"
+                };
+                
+                builder.OkButton.Text = Strings.Generic_ContinueAnyway;
+                if (!await builder.OpenDialogue(_mainWindow))
+                {
+                    return;
+                }
+            }
+
             if (apkSemVer != null)
             {
                 // check version and selected mod loader
@@ -226,6 +241,7 @@ namespace QuestPatcher.ViewModels
                 PatchingStage.Signing => Strings.PatchingStage_Signing,
                 PatchingStage.UninstallingOriginal => Strings.PatchingStage_UninstallOriginal,
                 PatchingStage.InstallingModded => Strings.PatchingStage_InstallModded,
+                PatchingStage.CleanUpMods => Strings.PatchingStage_CleanUpMods,
                 _ => throw new NotImplementedException()
             };
             this.RaisePropertyChanged(nameof(PatchingStageText));

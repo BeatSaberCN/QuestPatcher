@@ -17,6 +17,7 @@
           <ScrollViewer Margin="0 15 0 0" IsVisible="{Binding Config.ShowPatchingOptions}" HorizontalScrollBarVisibility="Auto" VerticalAlignment="Top" Background="{DynamicResource PatchingOptionsBackground}">
               <StackPanel Orientation="Horizontal" Spacing="25" Margin="10">
                   <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.ExternalFiles}" IsEnabled="False" Content="{x:Static res:Strings.PatchingOption_ExternalFiles}" />
+                  <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.CleanUpMods}" Content="清理Mod" />
                   <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.Debuggable}" Content="{x:Static res:Strings.PatchingOption_Debugging}"/>
                   <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.FlatScreenSupport}" Content="{x:Static res:Strings.PatchingOption_NoVRRequirement}"/>
                   <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.Microphone}" Content="{x:Static res:Strings.PatchingOption_Microphone}"/>

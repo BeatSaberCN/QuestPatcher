@@ -11,6 +11,7 @@
         Patching,
         Signing,
         UninstallingOriginal,
-        InstallingModded
+        InstallingModded,
+        CleanUpMods
     }
 }
