@@ -1,14 +1,22 @@
 ﻿{
   "appId": "com.beatgames.beatsaber",
+  "language": "Default",
   "displayLogs": false,
   "patchingPermissions": {
     "externalFiles": true,
     "debuggable": false,
+    "mrcWorkaround": false,
     "microphone": false,
+    "openXR": false,
     "flatScreenSupport": false,
     "handTrackingType": "None",
-    "modLoader": "QuestLoader"
+    "modLoader": "Scotland2",
+    "passthrough": false,
+    "bodyTracking": false,
+    "customSplashPath": null,
+    "cleanUpMods": true
   },
   "showPatchingOptions": false,
+  "useMirrorDownload": false,
   "selectedThemeName": "Dark"
 }
