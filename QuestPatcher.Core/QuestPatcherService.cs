@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using QuestPatcher.Core.CoreMod;
 using QuestPatcher.Core.Downgrading;
 using QuestPatcher.Core.Modding;
 using QuestPatcher.Core.Models;
@@ -36,6 +37,7 @@ namespace QuestPatcher.Core
         protected InfoDumper InfoDumper { get; }
         
         protected DowngradeManger DowngradeManger { get; }
+        protected CoreModsManager CoreModManager { get; }
 
         //TODO Sky: avoid making it public
         public Config Config => _configManager.GetOrLoadConfig();
@@ -66,6 +68,7 @@ namespace QuestPatcher.Core
             PatchingManager = new PatchingManager(Config, DebugBridge, SpecialFolders, FilesDownloader, Prompter, ModManager, InstallManager);
             InfoDumper = new InfoDumper(SpecialFolders, DebugBridge, ModManager, _configManager, InstallManager);
             DowngradeManger = new DowngradeManger(Config, InstallManager, FilesDownloader, DebugBridge, SpecialFolders);
+            CoreModManager = new CoreModsManager();
 
             Log.Debug("QuestPatcherService constructed (QuestPatcher version {QuestPatcherVersion})", VersionUtil.QuestPatcherVersion);
         }
@@ -110,6 +113,7 @@ namespace QuestPatcher.Core
 
             // Kill active ADB processes to ensure that the temp folder can be deleted.
             DebugBridge.Dispose();
+            CoreModManager.Dispose();
 
             try
             {
@@ -136,10 +140,10 @@ namespace QuestPatcher.Core
             Log.Information("App is installed");
 
             MigrateOldFiles();
-            
-            CoreModUtils.Instance.PackageId = Config.AppId;
+
+            CoreModManager.Init();
             await InstallManager.LoadInstalledApp();
-            await Task.WhenAll(CoreModUtils.Instance.RefreshCoreMods(), DownloadMirrorUtil.Instance.Refresh(), DowngradeManger.LoadAvailableDowngrades());
+            await Task.WhenAll(DownloadMirrorUtil.Instance.Refresh(), DowngradeManger.LoadAvailableDowngrades());
             if (InstallManager.InstalledApp!.ModLoader == ModLoader.Scotland2)
             {
                 await PatchingManager.SaveScotland2(false); // Make sure that Scotland2 is saved to the right location

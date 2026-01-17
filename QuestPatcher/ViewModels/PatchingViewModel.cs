@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using QuestPatcher.Core;
+using QuestPatcher.Core.CoreMod;
 using QuestPatcher.Core.Downgrading;
 using QuestPatcher.Core.Models;
 using QuestPatcher.Core.Patching;
@@ -33,9 +35,12 @@ namespace QuestPatcher.ViewModels
 
         private readonly PatchingManager _patchingManager;
         private readonly InstallManager _installManager;
+        private readonly CoreModsManager _coreModsManager;
         private readonly Window _mainWindow;
 
-        public PatchingViewModel(Config config, OperationLocker locker, PatchingManager patchingManager, InstallManager installManager, Window mainWindow, ProgressViewModel progressBarView, ExternalFilesDownloader filesDownloader)
+        public PatchingViewModel(Config config, OperationLocker locker, PatchingManager patchingManager,
+            InstallManager installManager, CoreModsManager coreModsManager, Window mainWindow,
+            ProgressViewModel progressBarView, ExternalFilesDownloader filesDownloader)
         {
             Config = config;
             Locker = locker;
@@ -44,6 +49,7 @@ namespace QuestPatcher.ViewModels
 
             _patchingManager = patchingManager;
             _installManager = installManager;
+            _coreModsManager = coreModsManager;
             _mainWindow = mainWindow;
 
             _patchingManager.PropertyChanged += (_, args) =>
@@ -64,34 +70,6 @@ namespace QuestPatcher.ViewModels
                 return;
             }
 
-            var apkSemVer = apk.SemVersion;
-            // TODO load core mod if not loaded
-            if (CoreModUtils.Instance.IsCoreModsLoaded)
-            {
-                var coreMods = CoreModUtils.Instance.GetCoreMods(apk.Version);
-                if (coreMods.Count == 0)
-                {
-                    Log.Warning("Trying to patch game without available core mods!");
-                    var builder = new DialogBuilder
-                    {
-                        Title = "没有核心MOD",
-                        Text = $"当前游戏版本 {apkSemVer?.BaseVersion().ToString() ?? apk.Version} 暂时还没有可用的核心MOD\n确定要继续打补丁吗？"
-                    };
-
-                    if (DowngradeManger.DowngradeFeatureAvailable(_installManager.InstalledApp, Config.AppId))
-                    {
-                        builder.Text += "\n\n您可以通过工具页面的“一键降级”按钮来自动降级游戏, 无需APK文件！";
-                    }
-                    
-                    builder.OkButton.Text = Strings.Generic_ContinueAnyway;
-                    if (!await builder.OpenDialogue(_mainWindow))
-                    {
-                        Log.Debug("Patching not started due to no core mods");
-                        return;
-                    }
-                }
-            }
-
             if (!Config.PatchingOptions.CleanUpMods)
             {
                 var builder = new DialogBuilder
@@ -107,6 +85,7 @@ namespace QuestPatcher.ViewModels
                 }
             }
 
+            var apkSemVer = apk.SemVersion;
             if (apkSemVer != null)
             {
                 // check version and selected mod loader
@@ -157,7 +136,10 @@ namespace QuestPatcher.ViewModels
             Locker.StartOperation();
             try
             {
-                await _patchingManager.PatchApp();
+                if (await IsCoreModsAvailable(apk))
+                {
+                    await _patchingManager.PatchApp();
+                }
             }
             catch (FileDownloadFailedException ex)
             {
@@ -204,6 +186,40 @@ namespace QuestPatcher.ViewModels
                 };
                 await builder.OpenDialogue(_mainWindow);
             }
+        }
+
+        private async Task<bool> IsCoreModsAvailable(ApkInfo apk)
+        {
+            try
+            {
+                var coreMods = await _coreModsManager.GetCoreModsAsync(apk.Version);
+                if (coreMods.Count == 0)
+                {
+                    Log.Warning("Trying to patch game without available core mods!");
+                    var builder = new DialogBuilder
+                    {
+                        Title = "没有核心MOD", Text = $"当前游戏版本 {apk.Version} 暂时还没有可用的核心MOD\n确定要继续打补丁吗？"
+                    };
+
+                    if (DowngradeManger.DowngradeFeatureAvailable(_installManager.InstalledApp, Config.AppId))
+                    {
+                        builder.Text += "\n\n您可以通过工具页面的“一键降级”按钮来自动降级游戏, 无需APK文件！";
+                    }
+
+                    builder.OkButton.Text = Strings.Generic_ContinueAnyway;
+                    if (!await builder.OpenDialogue(_mainWindow))
+                    {
+                        Log.Debug("Patching not started due to no core mods");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warning(e, "Failed to load core mods, continuing patching");
+            }
+
+            return true;
         }
 
         public async void SelectSplashPath()

@@ -82,11 +82,13 @@ namespace QuestPatcher.Services
             };
             _operationLocker = new();
             _operationLocker.StartOperation(); // Still loading
-            _browseManager = new(OtherFilesManager, ModManager, window, InstallManager, _operationLocker, this, FilesDownloader, SpecialFolders);
+            _browseManager = new BrowseImportManager(OtherFilesManager, ModManager, window, InstallManager,
+                _operationLocker, this, FilesDownloader, SpecialFolders, CoreModManager);
             _externalModManager = new ExternalModManager(FilesDownloader, _browseManager!);
             ProgressViewModel progressViewModel = new(_operationLocker, FilesDownloader);
             _otherItemsView = new OtherItemsViewModel(OtherFilesManager, window, _browseManager, _operationLocker, progressViewModel);
-            _patchingView = new PatchingViewModel(Config, _operationLocker, PatchingManager, InstallManager, window, progressViewModel, FilesDownloader);
+            _patchingView = new PatchingViewModel(Config, _operationLocker, PatchingManager, InstallManager,
+                CoreModManager, window, progressViewModel, FilesDownloader);
             _aboutView = new AboutViewModel(progressViewModel);
             _browseModView = new BrowseModViewModel(window, Config, _operationLocker, progressViewModel, InstallManager, ModManager, _externalModManager);
 

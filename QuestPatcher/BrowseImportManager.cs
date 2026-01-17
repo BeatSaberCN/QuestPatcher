@@ -4,12 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using QuestPatcher.Core;
+using QuestPatcher.Core.CoreMod;
+using QuestPatcher.Core.CoreMod.Models;
 using QuestPatcher.Core.Modding;
 using QuestPatcher.Core.Utils;
 using QuestPatcher.Models;
@@ -35,6 +36,7 @@ namespace QuestPatcher
         private readonly OperationLocker _locker;
         private readonly QuestPatcherUiService _uiService;
         private readonly SpecialFolders _specialFolders;
+        private readonly CoreModsManager _coreModsManager;
 
         private readonly FilePickerFileType _modsFilter = new("Quest Mods")
         {
@@ -43,7 +45,9 @@ namespace QuestPatcher
 
         private Queue<FileImportInfo>? _currentImportQueue;
 
-        public BrowseImportManager(OtherFilesManager otherFilesManager, ModManager modManager, Window mainWindow, InstallManager installManager, OperationLocker locker, QuestPatcherUiService uiService, ExternalFilesDownloader filesDownloader ,SpecialFolders specialFolders)
+        public BrowseImportManager(OtherFilesManager otherFilesManager, ModManager modManager, Window mainWindow,
+            InstallManager installManager, OperationLocker locker, QuestPatcherUiService uiService,
+            ExternalFilesDownloader filesDownloader, SpecialFolders specialFolders, CoreModsManager coreModsManager)
         {
             _otherFilesManager = otherFilesManager;
             _modManager = modManager;
@@ -53,6 +57,7 @@ namespace QuestPatcher
             _uiService = uiService;
             _filesDownloader = filesDownloader;
             _specialFolders = specialFolders;
+            _coreModsManager = coreModsManager;
         }
 
         private static FilePickerFileType GetCosmeticFilter(FileCopyType copyType)
@@ -509,19 +514,45 @@ namespace QuestPatcher
             await builder.OpenDialogue(_mainWindow);
             return selectedType;
         }
+
+        private async Task<IReadOnlyList<CoreModData>?> GetCoreModsAsync(bool refresh)
+        {
+            try
+            {
+                string version = _installManager.InstalledApp!.Version;
+                return await _coreModsManager.GetCoreModsAsync(version, refresh);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to get core mods");
+                var builder = new DialogBuilder
+                {
+                    Title = "无法检查核心Mod", Text = "检查核心Mod时发生了意料之外的错误", HideCancelButton = true
+                };
+                builder.WithException(e);
+                await builder.OpenDialogue(_mainWindow);
+                return null;
+            }
+        }
         
         /**
          * Return true if all core mods are installed or the user want's to ignore missing core mods
          */
+        // TODO: Refactor goto
         public async Task<bool> CheckCoreMods(bool manualCheck = false, bool lockTheLocker = false, bool refreshCoreMods = false)
         {
             if (lockTheLocker) _locker.StartOperation();
-            if (refreshCoreMods) await CoreModUtils.Instance.RefreshCoreMods();
-            
-            var coreMods = CoreModUtils.Instance.GetCoreMods(_installManager.InstalledApp?.Version ?? "");
+
+            var coreMods = await GetCoreModsAsync(refreshCoreMods);
+            if (coreMods is null)
+            {
+                // Failed to load core mods
+                goto CoreModsNotOK;
+            }
+
             if (coreMods.Count > 0)
             {
-                var missingCoreMods = new List<CoreModUtils.CoreMod>();
+                var missingCoreMods = new List<CoreModData>();
                 foreach(var coreMod in coreMods)
                 {
                     var existingCoreMod = _modManager.AllMods.Find((mod => mod.Id == coreMod.Id));
@@ -623,12 +654,12 @@ namespace QuestPatcher
             return false;
             
         }
-                
-        private async Task<bool> InstallMissingCoreMods(IList<CoreModUtils.CoreMod> mods) 
+
+        private async Task<bool> InstallMissingCoreMods(IList<CoreModData> mods) 
         {
             foreach(var mod in mods)
             {
-                string modUrl = mod.DownloadUrl.ToString();
+                string modUrl = mod.DownloadLink;
                 if (_uiService.Config.UseMirrorDownload) modUrl = await DownloadMirrorUtil.Instance.GetMirrorUrl(modUrl);
                 string path = Path.Combine(_specialFolders.TempFolder, mod.Filename ?? "coremod_tmp.qmod");
                 await _filesDownloader.DownloadUri(modUrl, path, mod.Filename ?? mod.Id);
