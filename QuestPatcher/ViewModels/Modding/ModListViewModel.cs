@@ -86,7 +86,7 @@ namespace QuestPatcher.ViewModels.Modding
         
         public async void OnCheckCoreModsClick()
         {
-            await _browseManager.CheckCoreMods(true,true, true);
+            await _browseManager.CheckCoreMods();
         }
 
         public void OnDownloadLocalizationClick()

@@ -12,13 +12,10 @@ using QuestPatcher.Core;
 using QuestPatcher.Core.CoreMod;
 using QuestPatcher.Core.CoreMod.Models;
 using QuestPatcher.Core.Modding;
-using QuestPatcher.Core.Utils;
 using QuestPatcher.Models;
 using QuestPatcher.Resources;
 using QuestPatcher.Services;
-using QuestPatcher.Utils;
 using Serilog;
-using Version = SemanticVersioning.Version;
 
 namespace QuestPatcher
 {
@@ -193,7 +190,11 @@ namespace QuestPatcher
             _locker.StartOperation();
             try
             {
-                await ProcessImportQueue();
+                // before attempting to import anything, check core mods
+                if (await CheckCoreMods(false))
+                {
+                    await ProcessImportQueue();
+                }
             }
             finally
             {
@@ -467,14 +468,8 @@ namespace QuestPatcher
                 return;
             }
 
-            // if there are no core mods and the user cancels the import,
-            // TryImportMod will return false even though the file is a qmod
-            if (extension != ".qmod")
-            {
-                throw new InstallationException($"未知文件类型 {extension}");
-            }
-
-            throw new InstallationException("qmod文件可能损坏或者核心mod缺失");
+            string message = extension == ".qmod" ? "qmod文件可能损坏" : $"未知文件类型 {extension}";
+            throw new InstallationException(message);
         }
 
         /// <summary>
@@ -515,158 +510,117 @@ namespace QuestPatcher
             return selectedType;
         }
 
-        private async Task<IReadOnlyList<CoreModData>?> GetCoreModsAsync(bool refresh)
+        public async Task CheckCoreMods()
         {
             try
             {
-                string version = _installManager.InstalledApp!.Version;
-                return await _coreModsManager.GetCoreModsAsync(version, refresh);
+                _locker.StartOperation();
+                if (await CheckCoreMods(true))
+                {
+                    DialogBuilder builder = new()
+                    {
+                        Title = "核心Mod安装正确！", Text = "恭喜你，你已经装好了核心Mod！", HideCancelButton = true
+                    };
+                    await builder.OpenDialogue(_mainWindow);
+                }
             }
             catch (Exception e)
             {
-                Log.Error(e, "Failed to get core mods");
+                Log.Error(e, "Failed to check core mods");
+            }
+            finally
+            {
+                _locker.FinishOperation();
+            }
+        }
+
+        private async Task<bool> CheckCoreMods(bool manualCheck)
+        {
+            IReadOnlyList<CoreModData>? missingCoreMods;
+            try
+            {
+                missingCoreMods = await _coreModsManager.VerifyCoreModsAsync(manualCheck);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to check core mods");
                 var builder = new DialogBuilder
                 {
                     Title = "无法检查核心Mod", Text = "检查核心Mod时发生了意料之外的错误", HideCancelButton = true
                 };
                 builder.WithException(e);
                 await builder.OpenDialogue(_mainWindow);
-                return null;
-            }
-        }
-        
-        /**
-         * Return true if all core mods are installed or the user want's to ignore missing core mods
-         */
-        // TODO: Refactor goto
-        public async Task<bool> CheckCoreMods(bool manualCheck = false, bool lockTheLocker = false, bool refreshCoreMods = false)
-        {
-            if (lockTheLocker) _locker.StartOperation();
-
-            var coreMods = await GetCoreModsAsync(refreshCoreMods);
-            if (coreMods is null)
-            {
-                // Failed to load core mods
-                goto CoreModsNotOK;
+                return false;
             }
 
-            if (coreMods.Count > 0)
+            if (missingCoreMods == null)
             {
-                var missingCoreMods = new List<CoreModData>();
-                foreach(var coreMod in coreMods)
-                {
-                    var existingCoreMod = _modManager.AllMods.Find((mod => mod.Id == coreMod.Id));
-                    if (existingCoreMod == null)
-                    {
-                        // not installed at all, or not for the right version of the game
-                        missingCoreMods.Add(coreMod);
-                    }
-                    else if (Version.TryParse(coreMod.Version, true, out var version) && version > existingCoreMod.Version)
-                    {
-                        // this coreMod is newer than the installed one
-                        // don't allow core mod downgrade when checking against core mod json
-                        
-                        missingCoreMods.Add(coreMod); // install the new one
-                    }
-                    else
-                    {
-                        // the existing one is the "latest", enable it if not already
-                        
-                        // we can't reliably check existingCoreMod's target game version
-                        // existingCoreMod.PackageVersion can be null which we will assume it will work
-                        
-                        // existingCoreMod.PackageVersion can be not matching the game installed while still
-                        // list as the core mod for the installed game version
-                        
-                        // game downgrade or upgrade from qp will delete all mods
-                        
-                        if (!existingCoreMod.IsInstalled)
-                        {
-                            await existingCoreMod.Install();
-                        }
-                    }
-                }
-                
-                if (missingCoreMods.Count != 0)
-                {
-                    Log.Warning("Core Mods Missing: {Mods}", missingCoreMods);
-                    DialogBuilder builder = new()
-                    {
-                        Title = "缺失核心Mod",
-                        Text = "你缺少了必须要安装的一些核心Mod，这会导致许多第三方Mod无法运行，因为他们均依赖核心Mod。\n" +
-                        "而自定义歌曲等基础功能，也是由核心Mod来实现的。\n" +
-                        "是否补全核心Mod？"
-                    };
-                    builder.OkButton.Text = "帮我补全";
-                    if (await builder.OpenDialogue(_mainWindow))
-                    {
-                        await InstallMissingCoreMods(missingCoreMods);
-                        goto CoreModsOK;
-                    }
-                    goto CoreModsNotOK;
-                } 
-                if (manualCheck)
-                {
-                    DialogBuilder builder = new()
-                    {
-                        Title = "核心Mod安装正确！",
-                        Text = "恭喜你，你已经装好了核心Mod！",
-                        HideCancelButton = true
-                    };
-                    await builder.OpenDialogue(_mainWindow);
-                }
-                goto CoreModsOK;
-            }
-            else
-            {
-                DialogBuilder builder = new()
+                // no core mods at all 
+                var builder = new DialogBuilder
                 {
                     Title = "未找到该版本的核心Mod！",
-                    Text = $"你当前安装的游戏版本为{_installManager.InstalledApp?.Version ?? "null"}，但核心Mod还没有更新，还没有适配该版本，所以无法安装核心Mod。\n" +
-                    $"你可以先降级游戏再重新打补丁装Mod。\n如需降级请查看新手教程左下角",
+                    Text =
+                        $"你当前安装的游戏版本为{_installManager.InstalledApp?.Version ?? "null"}，但核心Mod还没有更新，还没有适配该版本，所以无法安装核心Mod。\n" +
+                        $"你可以先降级游戏再重新打补丁装Mod。\n如需降级请在工具页面点击 “一键降级”",
                     HideCancelButton = manualCheck
                 };
                 builder.OkButton.Text = manualCheck ? "我知道了！" : "仍然安装";
-                builder.WithButtons(
-                    new ButtonInfo
-                    {
-                        Text = "进入新手教程",
-                        ReturnValue = true,
-                        OnClick = () => Util.OpenWebpage("https://bs.wgzeyu.com/oq-guide-qp/")
-                    });
-                
-                if (await builder.OpenDialogue(_mainWindow))
-                {
-                    goto CoreModsOK;
-                }
-                else
-                {
-                    goto CoreModsNotOK;
-                }
+                // if manual check, always return false because there are no core mods at all
+                return !manualCheck && await builder.OpenDialogue(_mainWindow);
             }
-            
-            CoreModsOK:
-            if (lockTheLocker) _locker.FinishOperation();
+
+            if (missingCoreMods.Count == 0)
+            {
+                // all core mods are installed
+                return true;
+            }
+
+            Log.Warning("Core Mods Missing: {Mods}", missingCoreMods);
+            var builder1 = new DialogBuilder
+            {
+                Title = "缺失核心Mod",
+                Text = "你缺少了必须要安装的一些核心Mod，这会导致许多第三方Mod无法运行，因为他们均依赖核心Mod。\n" +
+                       "而自定义歌曲等基础功能，也是由核心Mod来实现的。\n" +
+                       "是否补全核心Mod？"
+            };
+            builder1.OkButton.Text = "帮我补全";
+
+            if (!await builder1.OpenDialogue(_mainWindow))
+            {
+                // User doesn't want to install the missing ones
+                return false;
+            }
+
+            try
+            {
+                Log.Information("Installing core mods");
+                await InstallMissingCoreMods(missingCoreMods);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to install core mods");
+                var builder2 = new DialogBuilder
+                {
+                    Title = "出错了", Text = "安装核心Mod时发生了意料之外的错误", HideCancelButton = true
+                };
+                builder2.WithException(e);
+                await builder2.OpenDialogue(_mainWindow);
+                return false;
+            }
+
             return true;
-            
-            CoreModsNotOK:
-            if (lockTheLocker) _locker.FinishOperation();
-            return false;
-            
         }
 
-        private async Task<bool> InstallMissingCoreMods(IList<CoreModData> mods) 
+        private async Task InstallMissingCoreMods(IEnumerable<CoreModData> mods) 
         {
             foreach(var mod in mods)
             {
                 string modUrl = mod.DownloadLink;
-                if (_uiService.Config.UseMirrorDownload) modUrl = await DownloadMirrorUtil.Instance.GetMirrorUrl(modUrl);
                 string path = Path.Combine(_specialFolders.TempFolder, mod.Filename ?? "coremod_tmp.qmod");
                 await _filesDownloader.DownloadUri(modUrl, path, mod.Filename ?? mod.Id);
-                await TryImportMod(new FileImportInfo(path) { IsTemporaryFile = true }, false, false);
+                await TryImportMod(new FileImportInfo(path) { IsTemporaryFile = true }, false);
             }
             await _modManager.SaveMods();
-            return true;
         }
         
         /// <summary>
@@ -674,15 +628,10 @@ namespace QuestPatcher
         /// Will prompt to ask the user if they want to install the mod in the case that it is outdated
         /// </summary>
         /// <param name="importInfo">Information about the mod file to import.</param>
-        /// <param name="checkCoreMods">Whether to check core mods before import the mod</param>
         /// <param name="checkPackageVersion">Whether to check the package version indicated in the mod manifest</param>
         /// <returns>Whether or not the file could be imported as a mod</returns>
-        public async Task<bool> TryImportMod(FileImportInfo importInfo, bool checkCoreMods = true, bool checkPackageVersion = true)
+        public async Task<bool> TryImportMod(FileImportInfo importInfo, bool checkPackageVersion = true)
         {
-            if (checkCoreMods)
-                if (!await CheckCoreMods())
-                    return false;
-
             // Import the mod file and copy it to the quest
             var mod = await _modManager.TryParseMod(importInfo.Path, importInfo.OverrideExtension);
             if (mod is null)

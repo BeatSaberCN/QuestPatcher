@@ -39,8 +39,7 @@ namespace QuestPatcher.Core
         protected DowngradeManger DowngradeManger { get; }
         protected CoreModsManager CoreModManager { get; }
 
-        //TODO Sky: avoid making it public
-        public Config Config => _configManager.GetOrLoadConfig();
+        protected Config Config => _configManager.GetOrLoadConfig();
 
         private readonly ConfigManager _configManager;
 
@@ -59,7 +58,7 @@ namespace QuestPatcher.Core
             Prompter = prompter;
             _configManager = new ConfigManager(SpecialFolders);
             _configManager.GetOrLoadConfig(); // Load the config file
-            FilesDownloader = new ExternalFilesDownloader(SpecialFolders);
+            FilesDownloader = new ExternalFilesDownloader(Config, SpecialFolders);
             DebugBridge = new AndroidDebugBridge(FilesDownloader, prompter, ExitApplication);
             OtherFilesManager = new OtherFilesManager(Config, DebugBridge);
             ModManager = new ModManager(Config, DebugBridge, OtherFilesManager);
@@ -68,7 +67,7 @@ namespace QuestPatcher.Core
             PatchingManager = new PatchingManager(Config, DebugBridge, SpecialFolders, FilesDownloader, Prompter, ModManager, InstallManager);
             InfoDumper = new InfoDumper(SpecialFolders, DebugBridge, ModManager, _configManager, InstallManager);
             DowngradeManger = new DowngradeManger(Config, InstallManager, FilesDownloader, DebugBridge, SpecialFolders);
-            CoreModManager = new CoreModsManager();
+            CoreModManager = new CoreModsManager(ModManager, InstallManager);
 
             Log.Debug("QuestPatcherService constructed (QuestPatcher version {QuestPatcherVersion})", VersionUtil.QuestPatcherVersion);
         }

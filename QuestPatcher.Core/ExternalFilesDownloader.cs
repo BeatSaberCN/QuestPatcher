@@ -14,6 +14,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Tar;
+using QuestPatcher.Core.Models;
+using QuestPatcher.Core.Utils;
 using Serilog;
 
 namespace QuestPatcher.Core
@@ -219,12 +221,14 @@ namespace QuestPatcher.Core
 
         private readonly List<ExternalFileType> _fullyDownloaded = new();
 
+        private readonly Config _config;
         private readonly SpecialFolders _specialFolders;
         private readonly HttpClient _httpClient = new();
         private readonly bool _isUnix = OperatingSystem.IsMacOS() || OperatingSystem.IsLinux();
 
-        public ExternalFilesDownloader(SpecialFolders specialFolders)
+        public ExternalFilesDownloader(Config config, SpecialFolders specialFolders)
         {
+            _config = config;
             _specialFolders = specialFolders;
             _fullyDownloadedPath = Path.Combine(_specialFolders.ToolsFolder, "completedDownloads.dat");
 
@@ -565,6 +569,11 @@ namespace QuestPatcher.Core
         public async Task<HttpContentHeaders> DownloadUri(string url, string saveName, string? overrideFileName = null)
         {
             Log.Debug("Downloading {Url}\n To {SaveName}", url, saveName);
+            if (_config.UseMirrorDownload)
+            {
+                url = await DownloadMirrorUtil.Instance.GetMirrorUrl(url);
+            }
+
             try
             {
                 DownloadingFileName = overrideFileName ?? Path.GetFileName(saveName);

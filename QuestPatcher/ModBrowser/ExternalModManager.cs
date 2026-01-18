@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using QuestPatcher.Core;
-using QuestPatcher.Core.Modding;
 using QuestPatcher.ModBrowser.Models;
 using Serilog;
 
@@ -101,7 +100,7 @@ namespace QuestPatcher.ModBrowser
             // assume the file is qmod since there isn't any other supported mod file type
             var importInfo = new FileImportInfo(tempFile.Path) { IsTemporaryFile = true, OverrideExtension = ".qmod"}; 
             // TODO: Avoid calling BrowseImportManager directly
-            return await _browseImportManager.TryImportMod(importInfo, false, false);
+            return await _browseImportManager.TryImportMod(importInfo, false);
         }
     }
 }
