@@ -75,6 +75,22 @@ namespace QuestPatcher.ViewModels
                     OnPatchingStageChange(_patchingManager.PatchingStage);
                 }
             };
+
+            _installManager.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(_installManager.InstalledApp) && !Config.ExpertMode)
+                {
+                    Config.PatchingOptions.ModLoader = PreferredModLoader ?? ModLoader.Scotland2;
+                }
+            };
+
+            Config.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(Config.ExpertMode) && !Config.ExpertMode)
+                {
+                    Config.PatchingOptions.ModLoader = PreferredModLoader ?? ModLoader.Scotland2;
+                }
+            };
         }
 
         public async void StartPatching()
