@@ -565,8 +565,9 @@ namespace QuestPatcher
                     HideCancelButton = manualCheck
                 };
                 builder.OkButton.Text = manualCheck ? "我知道了！" : "仍然安装";
+                bool accepted = await builder.OpenDialogue(_mainWindow);
                 // if manual check, always return false because there are no core mods at all
-                return !manualCheck && await builder.OpenDialogue(_mainWindow);
+                return !manualCheck && accepted;
             }
 
             if (missingCoreMods.Count == 0)
