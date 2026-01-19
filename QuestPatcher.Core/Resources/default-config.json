@@ -17,6 +17,7 @@
     "cleanUpMods": true
   },
   "showPatchingOptions": false,
-  "useMirrorDownload": false,
+  "useMirrorDownload": true,
+  "externalModSource": "BSQModsCN",
   "selectedThemeName": "Dark"
 }
