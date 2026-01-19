@@ -7,14 +7,26 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using QuestPatcher.Core.ModBrowser.Models;
 using QuestPatcher.Core.Modding;
+using QuestPatcher.Core.Models;
 using Serilog;
 
 namespace QuestPatcher.Core.ModBrowser
 {
     public class ExternalModManager
     {
-        private const string VersionModUrlBase = "https://mods.bsquest.xyz/";
-        
+        private const string BsqModsUrl = "https://mods.bsquest.xyz/";
+        private const string BsqModsCnUrl = "https://qmods.bsaber.cn/";
+
+        private string VersionModUrlBase => _config.ExternalModSource switch
+        {
+            ExternalModSource.BSQMods => BsqModsUrl,
+            ExternalModSource.BSQModsCN => BsqModsCnUrl,
+            _ => BsqModsUrl
+        };
+
+        public event Action? ExternalModSourceChanged;
+
+        private readonly Config _config;
         private readonly ExternalFilesDownloader _filesDownloader;
         private readonly InstallManager _installManager;
         private readonly ModManager _modManager;
@@ -22,12 +34,22 @@ namespace QuestPatcher.Core.ModBrowser
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly Dictionary<string, List<ExternalMod>> _modCache = new Dictionary<string, List<ExternalMod>>();
 
-        public ExternalModManager(ExternalFilesDownloader filesDownloader, InstallManager installManager,
+        public ExternalModManager(Config config, ExternalFilesDownloader filesDownloader, InstallManager installManager,
             ModManager modManager)
         {
+            _config = config;
             _filesDownloader = filesDownloader;
             _installManager = installManager;
             _modManager = modManager;
+
+            _config.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(_config.ExternalModSource))
+                {
+                    var action = ExternalModSourceChanged;
+                    action?.Invoke();
+                }
+            };
         }
 
         /// <summary>

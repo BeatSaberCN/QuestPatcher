@@ -123,9 +123,13 @@ namespace QuestPatcher.ViewModels.ModBrowser
                     if (newVersion != _currentGameVersion)  
                     {
                         _currentGameVersion = newVersion;
-                        Task.Run(LoadMods);
+                        var __ = LoadMods();
                     }
                 }
+            };
+            _externalModManager.ExternalModSourceChanged += () =>
+            {
+                _ = LoadMods();
             };
         }
 

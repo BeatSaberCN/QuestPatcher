@@ -76,6 +76,22 @@ namespace QuestPatcher.Core.Models
         [DefaultValue(true)]
         public bool UseMirrorDownload { get; set; } = true;
 
+        private ExternalModSource _externalModSource = ExternalModSource.BSQModsCN;
+
+        [DefaultValue(ExternalModSource.BSQModsCN)]
+        public ExternalModSource ExternalModSource
+        {
+            get => _externalModSource;
+            set
+            {
+                if (value != _externalModSource)
+                {
+                    _externalModSource = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public string SelectedThemeName { get; set; } = "Dark";
 
         public event PropertyChangedEventHandler? PropertyChanged;

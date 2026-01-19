@@ -82,6 +82,13 @@
               <!-- 通过国内镜像来加速内容下载，建议中国大陆用户打开（蓝色代表打开） -->
           </TextBlock>
         </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <TextBlock VerticalAlignment="Center" FontSize="14" Text="更多Mod数据源:" />
+          <ComboBox SelectedIndex="{Binding Config.ExternalModSource}">
+            <ComboBoxItem Content="mods.bsquest.xyz (国际)" />
+            <ComboBoxItem Content="qmods.bsaber.cn (中文)" />
+          </ComboBox>
+        </StackPanel>
       </StackPanel>
         <StackPanel Margin="0 20 0 0" Spacing="10">
             <StackPanel Orientation="Horizontal" Spacing="20">

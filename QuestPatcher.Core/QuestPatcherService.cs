@@ -71,7 +71,7 @@ namespace QuestPatcher.Core
             InfoDumper = new InfoDumper(SpecialFolders, DebugBridge, ModManager, _configManager, InstallManager);
             DowngradeManger = new DowngradeManger(Config, InstallManager, FilesDownloader, DebugBridge, SpecialFolders);
             CoreModManager = new CoreModsManager(ModManager, InstallManager);
-            ExternalModManager = new ExternalModManager(FilesDownloader, InstallManager, ModManager);
+            ExternalModManager = new ExternalModManager(Config, FilesDownloader, InstallManager, ModManager);
 
             Log.Debug("QuestPatcherService constructed (QuestPatcher version {QuestPatcherVersion})", VersionUtil.QuestPatcherVersion);
         }
