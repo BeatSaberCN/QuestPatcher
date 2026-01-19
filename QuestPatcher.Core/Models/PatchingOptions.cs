@@ -43,5 +43,9 @@ namespace QuestPatcher.Core.Models
         public string? CustomSplashPath { get; set; } = null;
         
         public bool CleanUpMods { get; set; } = true;
+
+        public bool InstallCoreMods { get; set; } = true;
+
+        public bool AutoDowngrade { get; set; } = true;
     }
 }

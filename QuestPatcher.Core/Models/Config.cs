@@ -92,6 +92,22 @@ namespace QuestPatcher.Core.Models
             }
         }
 
+        private bool _expertMode = false;
+
+        [DefaultValue(false)]
+        public bool ExpertMode
+        {
+            get => _expertMode;
+            set
+            {
+                if (value != _expertMode)
+                {
+                    _expertMode = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public string SelectedThemeName { get; set; } = "Dark";
 
         public event PropertyChangedEventHandler? PropertyChanged;
