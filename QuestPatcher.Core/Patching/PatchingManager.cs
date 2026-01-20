@@ -625,6 +625,8 @@ namespace QuestPatcher.Core.Patching
                 }
             }
 
+            bool repatch = InstalledApp.IsModded;
+
             Log.Information("Downloading files . . .");
             PatchingStage = PatchingStage.FetchingFiles;
 
@@ -774,7 +776,8 @@ namespace QuestPatcher.Core.Patching
             // When repatching, certain mods may have been deleted when the app was uninstalled, so we will check for this
             await _modManager.UpdateModsStatus();
 
-            if (_config.PatchingOptions.CleanUpMods)
+            // Don't delete mods when it is repatch
+            if (!repatch && _config.PatchingOptions.CleanUpMods)
             {
                 PatchingStage = PatchingStage.CleanUpMods;
                 await _modManager.DeleteAllMods();
