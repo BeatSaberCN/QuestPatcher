@@ -69,7 +69,8 @@ namespace QuestPatcher.Core
             ModManager.RegisterModProvider(new QModProvider(ModManager, Config, DebugBridge, FilesDownloader));
             PatchingManager = new PatchingManager(Config, DebugBridge, SpecialFolders, FilesDownloader, Prompter, ModManager, InstallManager);
             InfoDumper = new InfoDumper(SpecialFolders, DebugBridge, ModManager, _configManager, InstallManager);
-            DowngradeManger = new DowngradeManger(Config, InstallManager, FilesDownloader, DebugBridge, SpecialFolders);
+            DowngradeManger = new DowngradeManger(Config, InstallManager, FilesDownloader, DebugBridge, SpecialFolders,
+                Prompter);
             CoreModManager = new CoreModsManager(ModManager, InstallManager);
             ExternalModManager = new ExternalModManager(Config, FilesDownloader, InstallManager, ModManager);
 
