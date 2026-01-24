@@ -557,4 +557,10 @@
   <data name="PatchingStage_CleanUpMods" xml:space="preserve">
         <value>清理旧版Mod</value>
     </data>
+    <data name="PatchingStage_Downgrading" xml:space="preserve">
+        <value>给游戏降级</value>
+    </data>
+    <data name="PatchingStage_InstallCoreMods" xml:space="preserve">
+        <value>安装核心Mod</value>
+    </data>
 </root>

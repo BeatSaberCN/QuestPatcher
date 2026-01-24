@@ -358,6 +358,7 @@ namespace QuestPatcher.ViewModels
             PatchingStageText = stage switch
             {
                 PatchingStage.NotStarted => Strings.PatchingStage_NotStarted,
+                PatchingStage.Downgrading => Strings.PatchingStage_Downgrading,
                 PatchingStage.FetchingFiles => Strings.PatchingStage_FetchFiles,
                 PatchingStage.MovingToTemp => Strings.PatchingStage_MoveToTemp,
                 PatchingStage.Patching => Strings.PatchingStage_Patching,
@@ -365,6 +366,7 @@ namespace QuestPatcher.ViewModels
                 PatchingStage.UninstallingOriginal => Strings.PatchingStage_UninstallOriginal,
                 PatchingStage.InstallingModded => Strings.PatchingStage_InstallModded,
                 PatchingStage.CleanUpMods => Strings.PatchingStage_CleanUpMods,
+                PatchingStage.InstallCoreMods => Strings.PatchingStage_InstallCoreMods,
                 _ => throw new NotImplementedException()
             };
             this.RaisePropertyChanged(nameof(PatchingStageText));

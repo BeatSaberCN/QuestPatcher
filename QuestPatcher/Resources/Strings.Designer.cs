@@ -975,11 +975,29 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downgrading the game.
+        /// </summary>
+        public static string PatchingStage_Downgrading {
+            get {
+                return ResourceManager.GetString("PatchingStage_Downgrading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (1/6) Downloading files needed to mod the APK .
         /// </summary>
         public static string PatchingStage_FetchFiles {
             get {
                 return ResourceManager.GetString("PatchingStage_FetchFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installing core mods.
+        /// </summary>
+        public static string PatchingStage_InstallCoreMods {
+            get {
+                return ResourceManager.GetString("PatchingStage_InstallCoreMods", resourceCulture);
             }
         }
         

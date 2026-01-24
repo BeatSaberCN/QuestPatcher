@@ -672,4 +672,10 @@ NOTE: If you see a restore app prompt inside your headset, just press close. The
   <data name="PatchingStage_CleanUpMods" xml:space="preserve">
       <value>Cleanling up old mods</value>
   </data>
+  <data name="PatchingStage_Downgrading" xml:space="preserve">
+      <value>Downgrading the game</value>
+  </data>
+  <data name="PatchingStage_InstallCoreMods" xml:space="preserve">
+      <value>Installing core mods</value>
+  </data>
 </root>

@@ -308,28 +308,38 @@ namespace QuestPatcher.Core.Downgrading
                     Log.Error(ex, "Failed to restore obb backup");
                 }
             }
-            
-            // Push patched obb files
 
-            foreach (var obbDiff in obbDiffs)
+            try
             {
-                string obbPath = Path.Combine(_outputFolder, obbDiff.OutputFileName);
-                string obbName = Path.GetFileName(obbPath);
-                Log.Information("Pushing patched obb file {ObbName}", obbName);
-                try
-                {
-                    await _installManager.ReplaceObbFile(obbDiff.FileName, obbDiff.OutputFileName, obbPath);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("Failed to push obb file {ObbName}", obbName);
-                    throw new DowngradeException("Failed to push patched obb file", e);
-                }
+                // Push patched obb files
+                Log.Information("Pushing patched obb files");
+                await PushObbFiles(obbDiffs);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Failed to push obb files");
+                throw new DowngradeException("Failed to push patched obb files", e);
             }
             
             await _installManager.NewApkInstalled(apkPath);
 
             Log.Information("App Downgraded successfully");
+        }
+
+        /// <summary>
+        ///     Push
+        /// </summary>
+        /// <param name="obbDiffs"></param>
+        /// <exception cref="DowngradeException"></exception>
+        internal async Task PushObbFiles(IList<FileDiff> obbDiffs)
+        {
+            foreach (var obbDiff in obbDiffs)
+            {
+                string obbPath = Path.Combine(_outputFolder, obbDiff.OutputFileName);
+                string obbName = Path.GetFileName(obbPath);
+                Log.Debug("Pushing patched obb file {ObbName}", obbName);
+                await _installManager.ReplaceObbFile(obbDiff.FileName, obbDiff.OutputFileName, obbPath);
+            }
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using QuestPatcher.Core.CoreMod.Models;
 using QuestPatcher.Core.Modding;
+using QuestPatcher.Core.Models;
 using QuestPatcher.Core.Utils;
 using Serilog;
 using Version = SemanticVersioning.Version;
@@ -19,12 +20,15 @@ namespace QuestPatcher.Core.CoreMod
         private const string BeatSaberCoreModsUrl =
             "https://raw.githubusercontent.com/QuestPackageManager/bs-coremods/main/core_mods.json";
 
+        private readonly ExternalFilesDownloader _filesDownloader;
         private readonly ModManager _modManager;
         private readonly InstallManager _installManager;
         private readonly HttpClient _client = new();
 
-        public CoreModsManager(ModManager modManager, InstallManager installManager)
+        public CoreModsManager(ExternalFilesDownloader filesDownloader, ModManager modManager,
+            InstallManager installManager)
         {
+            _filesDownloader = filesDownloader;
             _modManager = modManager;
             _installManager = installManager;
         }
@@ -124,6 +128,33 @@ namespace QuestPatcher.Core.CoreMod
             }
 
             return missingCoreMods;
+        }
+
+        public async Task InstallCoreModsAsync(IReadOnlyCollection<CoreModData> coreMods, ModLoader modLoader)
+        {
+            foreach (var coreMod in coreMods)
+            {
+                string modUrl = coreMod.DownloadLink;
+                string path = await _filesDownloader.DownloadUriToTemp(modUrl, coreMod.Filename ?? "coremod_tmp.qmod",
+                    coreMod.Filename ?? coreMod.Id);
+                var mod = await _modManager.TryParseMod(path);
+                if (mod is null)
+                {
+                    Log.Warning("Mod file for core mod {Mod} is corrupted", coreMod);
+                    continue;
+                }
+
+                if (mod.ModLoader != modLoader)
+                {
+                    Log.Warning("Trying to install an external mod with a different mod loader!");
+                    await _modManager.DeleteMod(mod);
+                    throw new InstallationException("Mod loader mis-match");
+                }
+
+                await mod.Install();
+            }
+
+            await _modManager.SaveMods();
         }
     }
 }
