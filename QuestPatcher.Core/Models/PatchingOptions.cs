@@ -90,7 +90,7 @@ namespace QuestPatcher.Core.Models
             }
         }
 
-        private bool _autoDowngrade = true;
+        private bool _autoDowngrade;
 
         public bool AutoDowngrade
         {

@@ -13,16 +13,14 @@
   <Panel>
     <DockPanel IsVisible="{Binding !IsPatchingInProgress}">
       <StackPanel Margin="20" Spacing="15" Orientation="Vertical" DockPanel.Dock="Top">
-        <StackPanel Spacing="15" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
-          <ToggleButton IsChecked="{Binding Config.PatchingOptions.AutoDowngrade}" Content="自动降级"
-                        IsEnabled="{Binding Config.PatchingOptions.AllowDowngrade}" />
-          <ToggleButton IsChecked="{Binding Config.ShowPatchingOptions}"
-                        Content="{x:Static res:Strings.Patching_PatchingOptions}" />
-        </StackPanel>
+        <ToggleButton IsChecked="{Binding Config.ShowPatchingOptions}" VerticalAlignment="Top"
+                      HorizontalAlignment="Right" Content="{x:Static res:Strings.Patching_PatchingOptions}" />
           <StackPanel Spacing="10" IsVisible="{Binding Config.ShowPatchingOptions}">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Top"
                           Background="{DynamicResource PatchingOptionsBackground}">
               <StackPanel Orientation="Horizontal" Spacing="25" Margin="10">
+                <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.AutoDowngrade}" Content="自动降级"
+                              IsEnabled="{Binding Config.PatchingOptions.AllowDowngrade}" />
                 <!-- <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.ExternalFiles}" IsEnabled="False" Content="{x:Static res:Strings.PatchingOption_ExternalFiles}" /> -->
                   <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.Debuggable}" Content="{x:Static res:Strings.PatchingOption_Debugging}"/>
                   <!-- <ToggleSwitch IsChecked="{Binding Config.PatchingOptions.FlatScreenSupport}" Content="{x:Static res:Strings.PatchingOption_NoVRRequirement}"/> -->
