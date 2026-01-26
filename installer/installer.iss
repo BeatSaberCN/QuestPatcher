@@ -8,8 +8,8 @@
 #expr FileClose(VersionFile)
 #undef VersionFile
 
-#define MyAppPublisher "Lauriethefish#6700"
-#define MyAppURL "https://github.com/Lauriethefish/QuestPatcher"
+#define MyAppPublisher "qe201020335"
+#define MyAppURL "https://github.com/BeatSaberCN/QuestPatcher"
 #define MyAppExeName "QuestPatcher.exe"
 
 [Setup]
@@ -27,7 +27,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
-InfoAfterFile=.\information.txt
+InfoBeforeFile=.\information.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
@@ -40,6 +40,7 @@ ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "chinesesimplified"; MessagesFile: ".\ChineseSimplified.isl"; InfoBeforeFile: ".\information-chinesesimplified.rtf"
 
 [Files]
 Source: "..\QuestPatcher\bin\Release\net6.0\win-x64\publish\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
