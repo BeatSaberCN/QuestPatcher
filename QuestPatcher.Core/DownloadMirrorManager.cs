@@ -13,7 +13,7 @@ public class DownloadMirrorManager : SharableLoading<Dictionary<string, string>>
     private const string MirrorUrl = "https://bs.wgzeyu.com/localization/mods.json";
 
     private readonly TimeSpan _refreshInterval = TimeSpan.FromMinutes(5);
-    private readonly HttpClient _client = new();
+    private readonly HttpClient _client = WebUtils.HttpClient;
 
     // Add static ones if needed
     private readonly Dictionary<string, string> _staticMirrors = new()

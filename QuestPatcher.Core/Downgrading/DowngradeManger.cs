@@ -28,7 +28,7 @@ namespace QuestPatcher.Core.Downgrading
         private readonly AndroidDebugBridge _debugBridge;
         private readonly IUserPrompter _prompter;
         private readonly string _outputFolder;
-        private readonly HttpClient _httpClient = new();
+        private readonly HttpClient _httpClient = WebUtils.HttpClient;
 
         public DowngradeManger(Config config, InstallManager installManager, ExternalFilesDownloader filesDownloader,
             AndroidDebugBridge debugBridge, SpecialFolders specialFolders, IUserPrompter prompter)

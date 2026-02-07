@@ -225,7 +225,7 @@ namespace QuestPatcher.Core
         private readonly Config _config;
         private readonly SpecialFolders _specialFolders;
         private readonly DownloadMirrorManager _downloadMirrorManager;
-        private readonly HttpClient _httpClient = new();
+        private readonly HttpClient _httpClient = WebUtils.HttpClient;
         private readonly bool _isUnix = OperatingSystem.IsMacOS() || OperatingSystem.IsLinux();
 
         public ExternalFilesDownloader(Config config, SpecialFolders specialFolders,

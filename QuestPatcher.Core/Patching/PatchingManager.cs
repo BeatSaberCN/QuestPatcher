@@ -62,6 +62,7 @@ namespace QuestPatcher.Core.Patching
         private readonly InstallManager _installManager;
         private readonly DowngradeManger _downgradeManger;
         private readonly CoreModsManager _coreModsManager;
+        private readonly HttpClient _httpClient = WebUtils.HttpClient;
 
         private readonly string _patchedApkPath;
         private Dictionary<string, Dictionary<string, string>>? _libUnityIndex;
@@ -92,8 +93,7 @@ namespace QuestPatcher.Core.Patching
             var repoRoot =  _config.UseMirrorDownload
                 ? @"https://beatmods.wgzeyu.com/github/QuestUnstrippedUnity"
                 : @"https://raw.githubusercontent.com/Lauriethefish/QuestUnstrippedUnity/main";
-
-            var client = new HttpClient();
+            
             // Only download the index once
             if (_libUnityIndex == null)
             {
@@ -101,7 +101,9 @@ namespace QuestPatcher.Core.Patching
 
                 try
                 {
-                    _libUnityIndex = await client.GetFromJsonAsync<Dictionary<string, Dictionary<string, string>>>(repoRoot + "/index.json");
+                    _libUnityIndex =
+                        await _httpClient.GetFromJsonAsync<Dictionary<string, Dictionary<string, string>>>(repoRoot +
+                            "/index.json");
                 }
                 catch (HttpRequestException ex)
                 {

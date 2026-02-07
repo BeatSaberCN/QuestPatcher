@@ -1,8 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -238,9 +236,7 @@ namespace QuestPatcher.Core
             try
             {
                 Log.Debug("Checking for QuestPatcher updates");
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse($"QuestPatcher/{VersionUtil.QuestPatcherVersion.BaseVersion()}"));
-                client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                using var client = WebUtils.HttpClient;
 
                 var res = JsonNode.Parse(
                     await client.GetStringAsync(

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using QuestPatcher.Core.ModBrowser.Models;
 using QuestPatcher.Core.Modding;
 using QuestPatcher.Core.Models;
+using QuestPatcher.Core.Utils;
 using Serilog;
 
 namespace QuestPatcher.Core.ModBrowser
@@ -30,8 +31,8 @@ namespace QuestPatcher.Core.ModBrowser
         private readonly ExternalFilesDownloader _filesDownloader;
         private readonly InstallManager _installManager;
         private readonly ModManager _modManager;
-        
-        private readonly HttpClient _httpClient = new HttpClient();
+
+        private readonly HttpClient _httpClient = WebUtils.HttpClient;
         private readonly Dictionary<string, List<ExternalMod>> _modCache = new Dictionary<string, List<ExternalMod>>();
 
         public ExternalModManager(Config config, ExternalFilesDownloader filesDownloader, InstallManager installManager,

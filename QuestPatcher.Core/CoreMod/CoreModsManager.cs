@@ -23,7 +23,7 @@ namespace QuestPatcher.Core.CoreMod
         private readonly ExternalFilesDownloader _filesDownloader;
         private readonly ModManager _modManager;
         private readonly InstallManager _installManager;
-        private readonly HttpClient _client = new();
+        private readonly HttpClient _client = WebUtils.HttpClient;
 
         public CoreModsManager(ExternalFilesDownloader filesDownloader, ModManager modManager,
             InstallManager installManager)
