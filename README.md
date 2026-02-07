@@ -17,7 +17,6 @@ QuestPatcher是给游戏打补丁装Mod的工具，有了它才能安装第三�
 # 如何下载
 | 下载方式           | 下载链接                                                                      |
 |----------------|---------------------------------------------------------------------------|
-| 网盘             | [点我](https://bs.wgzeyu.com/drive/)                                        |
 | Github Release | [ Releases ](https://github.com/BeatSaberCN/QuestPatcher/releases/latest) |
 | Github Actions | [ Github Actions ](https://github.com/BeatSaberCN/QuestPatcher/actions)   |
 
