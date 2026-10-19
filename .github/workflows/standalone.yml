@@ -8,6 +8,12 @@ on:
     branches:
       - main
       - dev
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'installer/**'
+      - '.github/workflows/macos-dmg.yml'
+      - '.github/workflows/windows-installer.yml'
   pull_request:
     branches:
       - main
@@ -18,10 +24,20 @@ jobs:
   build:
     strategy:
       matrix:
-        target: [{"runtime": 'ubuntu-x64', "artifact": "QuestPatcher-ubuntu.zip"}, {"runtime": 'win-x64', "artifact": "QuestPatcher-windows-standalone.zip"}]
+        target:
+          - runtime: ubuntu-x64
+            os: ubuntu-latest
+            artifact: QuestPatcher-linux.zip
+          # Windows exe icon and version info can only be embedded when building on Windows
+          - runtime: win-x64
+            os: windows-latest
+            artifact: QuestPatcher-windows-standalone.zip
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.target.os }}
     name: Build for ${{ matrix.target.runtime }}
+    defaults:
+      run:
+        shell: pwsh
 
     steps:
     - uses: actions/checkout@v4
@@ -45,8 +61,14 @@ jobs:
         name: ${{ matrix.target.runtime }}
         path: QuestPatcher/bin/Release/net6.0/${{ matrix.target.runtime }}/publish/
     - name: Compress Release Artifact
-      if: ${{ github.event_name == 'release' }}
+      if: ${{ github.event_name == 'release' && runner.os == 'Windows' }}
       run: 'Compress-Archive QuestPatcher/bin/Release/net6.0/${{ matrix.target.runtime }}/publish/* ./release.zip'
+    - name: Compress Release Artifact
+      # zip keeps the executable bit, Compress-Archive does not
+      if: ${{ github.event_name == 'release' && runner.os != 'Windows' }}
+      shell: bash
+      working-directory: QuestPatcher/bin/Release/net6.0/${{ matrix.target.runtime }}/publish
+      run: zip -r "$GITHUB_WORKSPACE/release.zip" .
     - name: Upload Release Asset
       if: ${{ github.event_name == 'release' }}
       id: upload-release-asset 
