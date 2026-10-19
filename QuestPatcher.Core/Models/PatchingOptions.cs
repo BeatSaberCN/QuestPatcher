@@ -30,8 +30,6 @@ namespace QuestPatcher.Core.Models
 
         public bool OpenXR { get; set; }
 
-        public bool FlatScreenSupport { get; set; }
-
         public HandTrackingVersion HandTrackingType { get; set; } = HandTrackingVersion.None;
 
         public ModLoader ModLoader

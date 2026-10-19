@@ -7,12 +7,9 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
-using AssetsTools.NET;
-using AssetsTools.NET.Extra;
 using QuestPatcher.Axml;
 using QuestPatcher.Core.CoreMod;
 using QuestPatcher.Core.Downgrading;
@@ -399,104 +396,15 @@ namespace QuestPatcher.Core.Patching
         }
 
         /// <summary>
-        /// Modifies the given APK to support normal android devices, not just VR headsets.
-        /// </summary>
-        /// <param name="apk">APK to modify</param>
-        /// <param name="ovrPlatformSdkPath">Path to the ovrPlatformSdk ZIP file to fetch a necessary library from</param>
-        /// <exception cref="PatchingException">If the APK file was missing essential files, or otherwise not a valid unity game for adding flatscreen support.</exception>
-        private async Task AddFlatscreenSupport(ApkZip apk, string ovrPlatformSdkPath)
-        {
-            const string bootCfgPath = "assets/bin/Data/boot.config";
-            const string globalGameManagersPath = "assets/bin/Data/globalgamemanagers";
-            const string ovrPlatformLoaderPath = "lib/arm64-v8a/libovrplatformloader.so";
-
-            if (!apk.ContainsFile(bootCfgPath))
-            {
-                throw new PatchingException("boot.config must exist on a Beat Saber installation");
-            }
-
-
-            string bootCfgContents;
-            using (var bootCfgStream = await apk.OpenReaderAsync(bootCfgPath))
-            using (var reader = new StreamReader(bootCfgStream))
-            {
-                bootCfgContents = (await reader.ReadToEndAsync())
-                    .Replace("vr-enabled=1", "vr-enabled=0")
-                    .Replace("vr-device-list=Oculus", "vr-device-list=");
-            }
-
-            using (var newBootCfg = new MemoryStream())
-            using (var newBootCfgWriter = new StreamWriter(newBootCfg))
-            {
-                newBootCfgWriter.Write(bootCfgContents);
-                newBootCfgWriter.Flush();
-
-                newBootCfg.Position = 0;
-                await apk.AddFileAsync(bootCfgPath, newBootCfg, PatchingCompression);
-
-            }
-
-            if (!apk.ContainsFile(globalGameManagersPath))
-            {
-                throw new PatchingException("globalgamemanagers must exist on a Beat Saber installation");
-            }
-
-            var am = new AssetsManager();
-
-            using var replacementContents = new MemoryStream();
-            using var writer = new AssetsFileWriter(replacementContents);
-            using (var gameManagersStream = await apk.OpenReaderAsync(globalGameManagersPath))
-            {
-                using var gameManagersMs = new MemoryStream();
-                await gameManagersStream.CopyToAsync(gameManagersMs);
-                gameManagersMs.Position = 0;
-
-                var inst = am.LoadAssetsFile(gameManagersMs, "globalgamemanagers", false);
-
-                var inf = inst.table.GetAssetsOfType((int) AssetClassID.BuildSettings).Single();
-
-                var assembly = Assembly.GetExecutingAssembly();
-                using var classPkgStream = assembly.GetManifestResourceStream("QuestPatcher.Core.Resources.classdata.tpk");
-                if (classPkgStream == null)
-                {
-                    throw new PatchingException("Could not find classdata.tpk in resources");
-                }
-                am.LoadClassPackage(classPkgStream);
-                am.LoadClassDatabaseFromPackage(inst.file.typeTree.unityVersion);
-
-                var type = am.GetTypeInstance(inst, inf);
-                var baseField = type.GetBaseField();
-
-                baseField.Get("enabledVRDevices").GetChildrenList()[0].SetChildrenList(Array.Empty<AssetTypeValueField>());
-                byte[] newBytes = baseField.WriteToByteArray();
-
-                var replacer = new AssetsReplacerFromMemory(0, inf.index, (int) inf.curFileType, 0xffff, newBytes);
-
-                inst.file.Write(writer, 0, new List<AssetsReplacer> { replacer });
-                am.UnloadAllAssetsFiles();
-            }
-            writer.Flush();
-            replacementContents.Position = 0;
-            await apk.AddFileAsync(globalGameManagersPath, replacementContents, PatchingCompression);
-
-            using var sdkArchive = ZipFile.Open(ovrPlatformSdkPath, ZipArchiveMode.Update);
-            var downgradedLoaderEntry = sdkArchive.GetEntry("Android/libs/arm64-v8a/libovrplatformloader.so")
-                                        ?? throw new PatchingException("No libovrplatformloader.so found in downloaded OvrPlatformSdk");
-            using var downloadedLoaderStream = downgradedLoaderEntry.Open();
-
-            await apk.AddFileAsync(ovrPlatformLoaderPath, downloadedLoaderStream, PatchingCompression);
-        }
-
-        /// <summary>
         /// Makes the modifications to the APK to support mods.
         /// </summary>
         /// <param name="mainPath">Path of the libmain file to replace</param>
         /// <param name="modloaderPath">Path of the libmodloader to replace, or null if no modloader needs to be stored within the APK</param>
         /// <param name="unityPath">Optionally, a path to a replacement libunity.so</param>
         /// <param name="libsDirectory">The directory where the SO files are stored in the APK</param>
-        /// <param name="ovrPlatformSdkPath">Path to the OVR platform SDK ZIP, used for patching with flatscreen support. Must be non-null if flatscreen support is enabled.</param>
         /// <param name="apk">The APK to patch</param>
-        private async Task ModifyApk(string mainPath, string? modloaderPath, string? unityPath, string? ovrPlatformSdkPath, string libsDirectory, ApkZip apk)
+        private async Task ModifyApk(string mainPath, string? modloaderPath, string? unityPath, string libsDirectory,
+            ApkZip apk)
         {
             Log.Information("Copying libmain.so and libmodloader.so . . .");
             await AddFileToApk(mainPath, Path.Combine(libsDirectory, "libmain.so"), apk);
@@ -516,12 +424,6 @@ namespace QuestPatcher.Core.Patching
             {
                 Log.Information("Adding unstripped libunity.so . . .");
                 await AddFileToApk(unityPath, Path.Combine(libsDirectory, "libunity.so"), apk);
-            }
-
-            if (_config.PatchingOptions.FlatScreenSupport)
-            {
-                Log.Information("Adding flatscreen support . . .");
-                await AddFlatscreenSupport(apk, ovrPlatformSdkPath!);
             }
 
             if (_config.PatchingOptions.CustomSplashPath != null)
@@ -664,7 +566,6 @@ namespace QuestPatcher.Core.Patching
             string libsPath = app.Is64Bit ? "lib/arm64-v8a" : "lib/armeabi-v7a";
             string mainPath;
             string? modloaderPath;
-            string? ovrPlatformSdkPath = null;
 
             if (scotland2)
             {
@@ -686,11 +587,6 @@ namespace QuestPatcher.Core.Patching
                     mainPath = await _filesDownloader.GetFileLocation(ExternalFileType.Main32);
                     modloaderPath = await _filesDownloader.GetFileLocation(ExternalFileType.Modloader32);
                 }
-            }
-
-            if (_config.PatchingOptions.FlatScreenSupport)
-            {
-                ovrPlatformSdkPath = await _filesDownloader.GetFileLocation(ExternalFileType.OvrPlatformSdk);
             }
 
             using var libUnityFile = await GetUnstrippedUnityPath(app.Version);
@@ -718,7 +614,7 @@ namespace QuestPatcher.Core.Patching
             var apk = await ApkZip.OpenAsync(apkStream);
             try
             {
-                await ModifyApk(mainPath, modloaderPath, libUnityFile?.Path, ovrPlatformSdkPath, libsPath, apk);
+                await ModifyApk(mainPath, modloaderPath, libUnityFile?.Path, libsPath, apk);
 
                 Log.Information("Signing APK . . .");
                 PatchingStage = PatchingStage.Signing;

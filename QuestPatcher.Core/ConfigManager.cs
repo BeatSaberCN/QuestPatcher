@@ -46,7 +46,6 @@ namespace QuestPatcher.Core
                 _loadedConfig.Language = Language.ChineseSimplified; // force Chinese Simplified
                 _loadedConfig.AppId = SharedConstants.BeatSaberPackageID; // force beat saber
                 _loadedConfig.PatchingOptions.ExternalFiles = true; // most mods need it
-                _loadedConfig.PatchingOptions.FlatScreenSupport = false; // doesn't work on "newer" unity versions
                 _loadedConfig.ExpertMode = _loadedConfig.ExpertMode; // sync advance options with expert mode
             }
 

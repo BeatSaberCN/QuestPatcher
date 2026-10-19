@@ -83,9 +83,6 @@
     <data name="PatchingOption_Debugging" xml:space="preserve">
         <value>允许调试</value>
     </data>
-    <data name="PatchingOption_NoVRRequirement" xml:space="preserve">
-        <value>禁用VR要求</value>
-    </data>
     <data name="PatchingOption_Microphone" xml:space="preserve">
         <value>启用麦克风</value>
     </data>

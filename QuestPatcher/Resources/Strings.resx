@@ -189,9 +189,6 @@
   <data name="PatchingOption_Debugging" xml:space="preserve">
     <value>Allow Debugging</value>
   </data>
-  <data name="PatchingOption_NoVRRequirement" xml:space="preserve">
-    <value>Disable VR Requirement</value>
-  </data>
   <data name="PatchingOption_Microphone" xml:space="preserve">
     <value>Enable Microphone</value>
   </data>

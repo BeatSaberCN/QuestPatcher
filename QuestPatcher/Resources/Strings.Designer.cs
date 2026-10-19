@@ -939,15 +939,6 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disable VR Requirement.
-        /// </summary>
-        public static string PatchingOption_NoVRRequirement {
-            get {
-                return ResourceManager.GetString("PatchingOption_NoVRRequirement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enable OpenXR.
         /// </summary>
         public static string PatchingOption_OpenXR {
