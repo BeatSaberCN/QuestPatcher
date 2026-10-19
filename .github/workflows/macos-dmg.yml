@@ -8,6 +8,13 @@ on:
     branches:
       - main
       - dev
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'build_release.bat'
+      - 'installer/**'
+      - '.github/workflows/standalone.yml'
+      - '.github/workflows/windows-installer.yml'
   workflow_dispatch:
 
 jobs:
