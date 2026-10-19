@@ -33,17 +33,15 @@ namespace QuestPatcher.Core.Models
 
         public HandTrackingVersion HandTrackingType { get; set; }
 
-        private ModLoader _modLoader = ModLoader.Scotland2;
-
         public ModLoader ModLoader
         {
-            get => _modLoader;
+            get;
             set
             {
-                _modLoader = value;
+                field = value;
                 NotifyPropertyChanged();
             }
-        }
+        } = ModLoader.Scotland2;
 
         public bool Passthrough { get; set; }
 
@@ -54,50 +52,42 @@ namespace QuestPatcher.Core.Models
         /// </summary>
         public string? CustomSplashPath { get; set; } = null;
 
-        private bool _cleanUpMods = true;
-
         public bool CleanUpMods
         {
-            get => _cleanUpMods;
+            get;
             set
             {
-                _cleanUpMods = value;
+                field = value;
                 NotifyPropertyChanged();
             }
-        }
-
-        private bool _installCoreMods = true;
+        } = true;
 
         public bool InstallCoreMods
         {
-            get => _installCoreMods;
+            get;
             set
             {
-                _installCoreMods = value;
+                field = value;
                 NotifyPropertyChanged();
             }
-        }
-
-        private bool _allowDowngrade = true;
+        } = true;
 
         public bool AllowDowngrade
         {
-            get => _allowDowngrade;
+            get;
             set
             {
-                _allowDowngrade = value;
+                field = value;
                 NotifyPropertyChanged();
             }
-        }
-
-        private bool _autoDowngrade;
+        } = true;
 
         public bool AutoDowngrade
         {
-            get => _autoDowngrade;
+            get;
             set
             {
-                _autoDowngrade = value;
+                field = value;
                 NotifyPropertyChanged();
             }
         }
