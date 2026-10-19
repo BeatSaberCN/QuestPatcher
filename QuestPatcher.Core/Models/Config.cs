@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using QuestPatcher.Core.Utils;
 
 namespace QuestPatcher.Core.Models
 {
@@ -17,7 +18,7 @@ namespace QuestPatcher.Core.Models
                     NotifyPropertyChanged();
                 }
             }
-        } = "";
+        } = SharedConstants.BeatSaberPackageID;
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Language Language { get; set; } = Language.Default;

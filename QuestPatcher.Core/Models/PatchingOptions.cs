@@ -31,7 +31,7 @@ namespace QuestPatcher.Core.Models
 
         public bool FlatScreenSupport { get; set; }
 
-        public HandTrackingVersion HandTrackingType { get; set; }
+        public HandTrackingVersion HandTrackingType { get; set; } = HandTrackingVersion.None;
 
         public ModLoader ModLoader
         {
@@ -50,7 +50,7 @@ namespace QuestPatcher.Core.Models
         /// <summary>
         /// Path to a PNG file containing a custom splash screen.
         /// </summary>
-        public string? CustomSplashPath { get; set; } = null;
+        public string? CustomSplashPath { get; set; }
 
         public bool CleanUpMods
         {

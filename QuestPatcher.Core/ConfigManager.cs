@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using QuestPatcher.Core.Models;
@@ -35,81 +34,51 @@ namespace QuestPatcher.Core
 
         /// <summary>
         /// Gets the currently loaded config file, or loads the config file if none is loaded.
-        /// Will attempt to recover corrupted configs by overwriting them with the default config file.
+        /// Will attempt to recover corrupted configs by overwriting them with the default config.
         /// </summary>
         /// <returns>The loaded config</returns>
         public Config GetOrLoadConfig()
         {
             if (_loadedConfig == null)
             {
-                try
-                {
-                    SaveDefaultConfig(false);
-                    _loadedConfig = LoadConfig();
-                    _loadedConfig.UseMirrorDownload = false; // force not using mirror
-                    _loadedConfig.Language = Language.ChineseSimplified; // force Chinese Simplified
-                    _loadedConfig.AppId = SharedConstants.BeatSaberPackageID; // force beat saber
-                    _loadedConfig.PatchingOptions.ExternalFiles = true; // most mods need it
-                    _loadedConfig.PatchingOptions.FlatScreenSupport = false; // doesn't work on "newer" unity versions
-                    _loadedConfig.ExpertMode = _loadedConfig.ExpertMode; // sync advance options with expert mode
-                }
-                catch (Exception ex)
-                {
-                    if (ex is FormatException or JsonException)
-                    {
-                        // Attempt to respond to config load errors by overwriting with the default config file
-                        Log.Warning(ex, "Failed to load the config file, overwriting with default config instead!");
-                        SaveDefaultConfig(true);
-                        _loadedConfig = LoadConfig();
-                        Log.Information("Overwriting with default config fixed the issue, continuing");
-                    }
-                    else
-                    {
-                        // Unknown errors just get rethrown an treated as an unhandled load error
-                        throw;
-                    }
-                }
+                _loadedConfig = LoadConfig();
+                _loadedConfig.UseMirrorDownload = false; // force not using mirror
+                _loadedConfig.Language = Language.ChineseSimplified; // force Chinese Simplified
+                _loadedConfig.AppId = SharedConstants.BeatSaberPackageID; // force beat saber
+                _loadedConfig.PatchingOptions.ExternalFiles = true; // most mods need it
+                _loadedConfig.PatchingOptions.FlatScreenSupport = false; // doesn't work on "newer" unity versions
+                _loadedConfig.ExpertMode = _loadedConfig.ExpertMode; // sync advance options with expert mode
             }
 
             return _loadedConfig;
         }
 
         /// <summary>
-        /// Saves the default config file if no config file currently exists.
-        /// </summary>
-        /// <param name="overwrite">Whether to overwrite the config even if an existing config file exists</param>
-        /// <exception cref="NullReferenceException"></exception>
-        private void SaveDefaultConfig(bool overwrite)
-        {
-            // If not forcing an overwrite of the config, and the config exists, we don't need to save the default config.
-            if (File.Exists(ConfigPath) && !overwrite) { return; }
-
-            Log.Debug("Saving default config file . . .");
-            using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("QuestPatcher.Core.Resources.default-config.json");
-            if (resourceStream == null)
-            {
-                throw new NullReferenceException("Unable to find default-config.json in resources!");
-            }
-
-            using FileStream destStream = new(ConfigPath, FileMode.Create, FileAccess.Write);
-            resourceStream.CopyTo(destStream);
-        }
-
-        /// <summary>
         /// Loads the config from disk.
+        /// If no config file exists, or it cannot be parsed, a default config is created and saved instead.
         /// </summary>
         /// <returns>The loaded config</returns>
-        /// <exception cref="FormatException">If the loaded config did not contain a config object, i.e. it was empty</exception>
         private Config LoadConfig()
         {
+            if (!File.Exists(ConfigPath))
+            {
+                Log.Information("No config file found, saving default config");
+                return SaveDefaultConfig();
+            }
+
             Log.Information("Loading config . . .");
 
-            // Load the config
-            using var configStream = File.OpenRead(ConfigPath);
-            var newConfig = JsonSerializer.Deserialize<Config>(configStream, SerializerOptions);
-            if (newConfig == null)
+            Config newConfig;
+            try
             {
-                throw new FormatException("Loaded config contained no config object");
+                using var configStream = File.OpenRead(ConfigPath);
+                newConfig = JsonSerializer.Deserialize<Config>(configStream, SerializerOptions)
+                            ?? throw new FormatException("Loaded config contained no config object");
+            }
+            catch (Exception ex) when (ex is FormatException or JsonException)
+            {
+                Log.Warning(ex, "Failed to load the config file, overwriting with default config instead!");
+                return SaveDefaultConfig();
             }
 
             // In the past, an appId.txt file was used to store the app ID
@@ -119,10 +88,17 @@ namespace QuestPatcher.Core
                 Log.Information("Loading app ID from legacy appId.txt");
                 newConfig.AppId = File.ReadAllText(_legacyAppIdPath);
                 File.Delete(_legacyAppIdPath);
-                SaveConfig();
+                SaveConfig(newConfig);
             }
 
             return newConfig;
+        }
+
+        private Config SaveDefaultConfig()
+        {
+            var config = new Config();
+            SaveConfig(config);
+            return config;
         }
 
         /// <summary>
@@ -133,9 +109,14 @@ namespace QuestPatcher.Core
         {
             if (_loadedConfig == null) { throw new InvalidOperationException("Cannot save the config as it has not been loaded yet"); }
 
+            SaveConfig(_loadedConfig);
+        }
+
+        private void SaveConfig(Config config)
+        {
             Log.Information("Saving config file . . .");
             using var stream = File.Open(ConfigPath, FileMode.Create);
-            JsonSerializer.Serialize(stream, _loadedConfig, SerializerOptions);
+            JsonSerializer.Serialize(stream, config, SerializerOptions);
         }
     }
 }
