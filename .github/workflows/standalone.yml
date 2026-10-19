@@ -21,7 +21,7 @@ jobs:
         target:
           - runtime: ubuntu-x64
             os: ubuntu-latest
-            artifact: QuestPatcher-ubuntu.zip
+            artifact: QuestPatcher-linux.zip
           # Windows exe icon and version info can only be embedded when building on Windows
           - runtime: win-x64
             os: windows-latest
