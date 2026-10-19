@@ -5,7 +5,7 @@ obj/
 
 # Windows installer output/extracted files
 installer/inno/
-installer/windows-installer.exe
+installer/QuestPatcher-windows.exe
 
 # MacOS DMG output files
 .DS_Store
