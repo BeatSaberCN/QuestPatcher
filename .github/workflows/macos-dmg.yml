@@ -26,7 +26,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.402
+        dotnet-version: 10.0.x
     - name: Set version
       if: ${{ github.event_name == 'release' }}
       run: 'echo "${{ github.event.release.tag_name }}" > ./VERSION'
@@ -41,7 +41,7 @@ jobs:
     - name: Add LICENSE to app contents
       run: cp LICENSE macos-dmg/dmg-root/LICENSE.txt
     - name: Add app to app contents
-      run: cp -r ./QuestPatcher/bin/Release/net6.0/osx-x64/publish/QuestPatcher.app ./macos-dmg/dmg-root/QuestPatcher.app
+      run: cp -r ./QuestPatcher/bin/Release/net10.0/osx-x64/publish/QuestPatcher.app ./macos-dmg/dmg-root/QuestPatcher.app
     - name: Strip signature
       run: codesign --remove-signature ./macos-dmg/dmg-root/QuestPatcher.app
     - name: Detach existing DMGs

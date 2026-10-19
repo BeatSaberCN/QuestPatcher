@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
     <AssemblyVersion>1.0.1.0</AssemblyVersion>
   </PropertyGroup>
     
@@ -18,10 +17,6 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>axml, android, xml</PackageTags>
     <PackageReleaseNotes>Fixed attribute order to be in ascending resource ID. This fixed the debuggable attribute not being detected by Android.</PackageReleaseNotes>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugType>embedded</DebugType>
   </PropertyGroup>
   
 </Project>

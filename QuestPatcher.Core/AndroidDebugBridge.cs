@@ -198,7 +198,7 @@ namespace QuestPatcher.Core
                 {
                     if (semver >= MinAdbVersion)
                     {
-                        _adbPath = outputInfo.FullPath ?? adbExecutablePath;
+                        _adbPath = ParseInstalledPath(output) ?? adbExecutablePath;
                         return true;
                     }
                 }
@@ -213,6 +213,28 @@ namespace QuestPatcher.Core
             {
                 return false; // Executable not present
             }
+        }
+
+        /// <summary>
+        /// Finds the full path of the ADB executable from the output of <c>adb version</c>.
+        /// Useful if the executable was invoked from the PATH environment variable.
+        /// </summary>
+        /// <param name="versionOutput">The output of <c>adb version</c></param>
+        /// <returns>The full path, or null if the output does not contain it</returns>
+        private static string? ParseInstalledPath(string versionOutput)
+        {
+            const string InstalledPrefix = "Installed as ";
+
+            foreach (string line in versionOutput.Split('\n'))
+            {
+                string trimmed = line.Trim();
+                if (trimmed.StartsWith(InstalledPrefix))
+                {
+                    return trimmed.Substring(InstalledPrefix.Length);
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

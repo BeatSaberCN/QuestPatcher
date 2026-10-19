@@ -43,8 +43,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "chinesesimplified"; MessagesFile: ".\ChineseSimplified.isl"; InfoBeforeFile: ".\information-chinesesimplified.rtf"
 
 [Files]
-Source: "..\QuestPatcher\bin\Release\net6.0\win-x64\publish\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\QuestPatcher\bin\Release\net6.0\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\QuestPatcher\bin\Release\net10.0\win-x64\publish\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\QuestPatcher\bin\Release\net10.0\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

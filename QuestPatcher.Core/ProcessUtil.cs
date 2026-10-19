@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,13 +31,6 @@ namespace QuestPatcher.Core
         /// The exit code of the process
         /// </summary>
         public int ExitCode { get; set; }
-
-        /// <summary>
-        /// The full path to the executable that was invoked.
-        /// Useful if running an executable on the PATH environnment variable.
-        /// May be null if this information was unavailable.
-        /// </summary>
-        public string? FullPath { get; set; }
     }
 
     /// <summary>
@@ -94,22 +86,6 @@ namespace QuestPatcher.Core
                 _runningProcesses.Add(process);
             }
 
-            string? fullPath = null;
-            try
-            {
-                fullPath = process.MainModule?.FileName;
-            }
-            catch (Exception ex)
-            {
-                if (ex is Win32Exception)
-                {
-                    Log.Warning(ex, "Failed to get full path to running ADB client. AntiVirus might be blocking this.");
-                } else if(ex is InvalidOperationException)
-                {
-                    Log.Debug("ADB process exited too early to get full path");
-                }
-            }
-
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
 
@@ -128,8 +104,7 @@ namespace QuestPatcher.Core
             {
                 StandardOutput = standardOutputBuilder.ToString(),
                 ErrorOutput = errorOutputBuilder.ToString(),
-                ExitCode = process.ExitCode,
-                FullPath = fullPath
+                ExitCode = process.ExitCode
             };
         }
 
