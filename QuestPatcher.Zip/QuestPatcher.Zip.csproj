@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
     <AssemblyVersion>1.1.2.0</AssemblyVersion>
   </PropertyGroup>
 
@@ -20,12 +19,8 @@
     <PackageReleaseNotes>Use better maintained crypto library for signing. (also works with native AOT)</PackageReleaseNotes>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+    <PackageReference Include="BouncyCastle.Cryptography" />
+    <PackageReference Include="System.Text.Encoding.CodePages" />
   </ItemGroup>
 </Project>

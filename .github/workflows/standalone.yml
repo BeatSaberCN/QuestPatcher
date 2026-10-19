@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         target:
-          - runtime: ubuntu-x64
+          - runtime: linux-x64
             os: ubuntu-latest
             artifact: QuestPatcher-linux.zip
           # Windows exe icon and version info can only be embedded when building on Windows
@@ -44,7 +44,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.402
+        dotnet-version: 10.0.x
     - name: Install dependencies
       run: dotnet restore
     - name: Set version
@@ -53,21 +53,21 @@ jobs:
     - name: Build ${{ matrix.target.runtime }}
       run: dotnet publish QuestPatcher/QuestPatcher.csproj -r ${{ matrix.target.runtime }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -c Release --self-contained
     - name: Copy license
-      run: cp LICENSE QuestPatcher/bin/Release/net6.0/${{ matrix.target.runtime }}/publish/LICENSE.txt
+      run: cp LICENSE QuestPatcher/bin/Release/net10.0/${{ matrix.target.runtime }}/publish/LICENSE.txt
     - name: Artifact Upload ${{ matrix.target.runtime }}
       if: ${{ github.event_name != 'release' }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.target.runtime }}
-        path: QuestPatcher/bin/Release/net6.0/${{ matrix.target.runtime }}/publish/
+        path: QuestPatcher/bin/Release/net10.0/${{ matrix.target.runtime }}/publish/
     - name: Compress Release Artifact
       if: ${{ github.event_name == 'release' && runner.os == 'Windows' }}
-      run: 'Compress-Archive QuestPatcher/bin/Release/net6.0/${{ matrix.target.runtime }}/publish/* ./release.zip'
+      run: 'Compress-Archive QuestPatcher/bin/Release/net10.0/${{ matrix.target.runtime }}/publish/* ./release.zip'
     - name: Compress Release Artifact
       # zip keeps the executable bit, Compress-Archive does not
       if: ${{ github.event_name == 'release' && runner.os != 'Windows' }}
       shell: bash
-      working-directory: QuestPatcher/bin/Release/net6.0/${{ matrix.target.runtime }}/publish
+      working-directory: QuestPatcher/bin/Release/net10.0/${{ matrix.target.runtime }}/publish
       run: zip -r "$GITHUB_WORKSPACE/release.zip" .
     - name: Upload Release Asset
       if: ${{ github.event_name == 'release' }}
