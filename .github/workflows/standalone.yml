@@ -11,7 +11,6 @@ on:
     paths-ignore:
       - '**.md'
       - '.gitignore'
-      - 'build_release.bat'
       - 'installer/**'
       - '.github/workflows/macos-dmg.yml'
       - '.github/workflows/windows-installer.yml'
