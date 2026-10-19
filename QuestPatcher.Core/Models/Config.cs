@@ -1,108 +1,83 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using QuestPatcher.Core.Utils;
 
 namespace QuestPatcher.Core.Models
 {
     public class Config : INotifyPropertyChanged
     {
-        private string _appId = "";
         public string AppId
         {
-            get => _appId;
+            get;
             set
             {
-                if (value != _appId)
+                if (value != field)
                 {
-                    _appId = value;
+                    field = value;
                     NotifyPropertyChanged();
                 }
             }
-        }
+        } = SharedConstants.BeatSaberPackageID;
 
-        [DefaultValue(Language.Default)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Language Language { get; set; } = Language.Default;
 
-        private bool _displayLogs;
-
-        [DefaultValue(false)]
         public bool DisplayLogs
         {
-            get => _displayLogs;
+            get;
             set
             {
-                if (value != _displayLogs)
+                if (value != field)
                 {
-                    _displayLogs = value;
+                    field = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        [DefaultValue(null)]
+        // Populated in place when loading, a null value in the config file is ignored
+        [JsonInclude]
         [JsonPropertyName("patchingPermissions")]
-        public PatchingOptions PatchingOptions
-        {
-            get => _patchingPermissions;
-            set
-            {
-                // Used to get round default JSON values not being able to be objects. We instead set it to null by default then have the default backing field set to the default value
-                if (value != _patchingPermissions && value != null)
-                {
-                    _patchingPermissions = value;
-                    NotifyPropertyChanged();
-                }
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+        public PatchingOptions PatchingOptions { get; private init => field = value ?? field; } = new();
 
-            }
-        }
-        private PatchingOptions _patchingPermissions = new();
-
-        [DefaultValue(false)]
         public bool ShowPatchingOptions
         {
-            get => _showPatchingOptions;
+            get;
             set
             {
-                if (value != _showPatchingOptions)
+                if (value != field)
                 {
-                    _showPatchingOptions = value;
+                    field = value;
                     NotifyPropertyChanged();
                 }
             }
         }
-        private bool _showPatchingOptions;
 
-        [DefaultValue(true)]
         public bool UseMirrorDownload { get; set; } = true;
 
-        private ExternalModSource _externalModSource = ExternalModSource.BSQModsCN;
-
-        [DefaultValue(ExternalModSource.BSQModsCN)]
         public ExternalModSource ExternalModSource
         {
-            get => _externalModSource;
+            get;
             set
             {
-                if (value != _externalModSource)
+                if (value != field)
                 {
-                    _externalModSource = value;
+                    field = value;
                     NotifyPropertyChanged();
                 }
             }
-        }
+        } = ExternalModSource.BSQModsCN;
 
-        private bool _expertMode = false;
-
-        [DefaultValue(false)]
         public bool ExpertMode
         {
-            get => _expertMode;
+            get;
             set
             {
-                if (value != _expertMode)
+                if (value != field)
                 {
-                    _expertMode = value;
+                    field = value;
                     NotifyPropertyChanged();
                 }
 
