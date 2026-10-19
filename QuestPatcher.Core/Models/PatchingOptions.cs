@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace QuestPatcher.Core.Models
 {
@@ -12,9 +14,8 @@ namespace QuestPatcher.Core.Models
 
         public bool Debuggable { get; set; } // Allows debugging with GDB or LLDB
 
-        /// <summary>
-        /// Used to support loading legacy configs
-        /// </summary>
+        [Obsolete("Use HandTrackingType instead. This is only used to support loading legacy configs.", true)]
+        [UsedImplicitly]
         public bool HandTracking
         {
             set

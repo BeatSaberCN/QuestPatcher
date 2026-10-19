@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="BsDiff" />
+    <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
     <PackageReference Include="QuestPatcher.QMod" />
     <PackageReference Include="SemanticVersioning" />
     <PackageReference Include="Serilog" />
