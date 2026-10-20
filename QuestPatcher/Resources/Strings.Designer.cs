@@ -792,9 +792,9 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your installation is now modded! 
-        ///You can now access installed mods, cosmetics, etc. 
-        /// 
+        ///   Looks up a localized string similar to Your installation is now modded!
+        ///You can now access installed mods, cosmetics, etc.
+        ///
         ///NOTE: If you see a restore app prompt inside your headset, just press close. The chance of getting banned for modding is virtually zero, so it&apos;s nothing to worry about..
         /// </summary>
         public static string Patching_PatchingSuccess_Text {
@@ -1139,33 +1139,6 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change App.
-        /// </summary>
-        public static string Prompt_AppNotInstalled_ChangeApp {
-            get {
-                return ResourceManager.GetString("Prompt_AppNotInstalled_ChangeApp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The selected app - {0} - is not installed.
-        /// </summary>
-        public static string Prompt_AppNotInstalled_Text {
-            get {
-                return ResourceManager.GetString("Prompt_AppNotInstalled_Text", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to App Not Installed.
-        /// </summary>
-        public static string Prompt_AppNotInstalled_Title {
-            get {
-                return ResourceManager.GetString("Prompt_AppNotInstalled_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No unstripped libunity.so is available for the app you have selected. This may mean that certain mods will not work correctly until one is added to the index. Proceed with caution - if you&apos;re updating from an older version, it is wise to wait for the latest version of your app to be added..
         /// </summary>
         public static string Prompt_NoUnstrippedUnity_Text {
@@ -1260,42 +1233,6 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Confirm new App.
-        /// </summary>
-        public static string SelectApp_Confirm {
-            get {
-                return ResourceManager.GetString("SelectApp_Confirm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Loading installed applications . . ..
-        /// </summary>
-        public static string SelectApp_Loading {
-            get {
-                return ResourceManager.GetString("SelectApp_Loading", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Changing your app will reload QuestPatcher to pull the new APK, which may take a minute or so..
-        /// </summary>
-        public static string SelectApp_Message {
-            get {
-                return ResourceManager.GetString("SelectApp_Message", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change Selected App.
-        /// </summary>
-        public static string SelectApp_Title {
-            get {
-                return ResourceManager.GetString("SelectApp_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Multiple Android devices are connected to your computer. Please select the device to use by clicking a row in the grid shown below..
         /// </summary>
         public static string SelectDevice_Message {
@@ -1355,24 +1292,6 @@ namespace QuestPatcher.Resources {
         public static string SideBarHeader_Patching {
             get {
                 return ResourceManager.GetString("SideBarHeader_Patching", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change App.
-        /// </summary>
-        public static string Tools_Option_ChangeApp {
-            get {
-                return ResourceManager.GetString("Tools_Option_ChangeApp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Allows you to select a different application to mod.
-        /// </summary>
-        public static string Tools_Option_ChangeApp_Description {
-            get {
-                return ResourceManager.GetString("Tools_Option_ChangeApp_Description", resourceCulture);
             }
         }
         

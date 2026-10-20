@@ -145,19 +145,7 @@
     <data name="SelectDevice_Message" xml:space="preserve">
         <value>检测到多个连接的安卓设备，请在下方选择您想使用的设备</value>
     </data>
-    <data name="SelectApp_Confirm" xml:space="preserve">
-        <value>确认新应用</value>
-    </data>
-    <data name="SelectApp_Loading" xml:space="preserve">
-        <value>正在加载已安装的应用 . . .</value>
-    </data>
-    <data name="SelectApp_Message" xml:space="preserve">
-        <value>更改应用将重启载 QuestPatcher 以提取新的 APK，这可能需要一分钟左右的时间。</value>
-    </data>
-    <data name="SelectApp_Title" xml:space="preserve">
-        <value>更改应用</value>
-    </data>
-    <data name="Tools_Section_Tools" xml:space="preserve">
+  <data name="Tools_Section_Tools" xml:space="preserve">
         <value>便携操作</value>
     </data>
     <data name="Tools_Section_Tools_Description" xml:space="preserve">
@@ -208,13 +196,7 @@
     <data name="Tools_Section_Options_Description" xml:space="preserve">
         <value>QuestPatcher设置</value>
     </data>
-    <data name="Tools_Option_ChangeApp" xml:space="preserve">
-        <value>更换应用</value>
-    </data>
-    <data name="Tools_Option_ChangeApp_Description" xml:space="preserve">
-        <value>选择另一个被打Mod的应用</value>
-    </data>
-    <data name="Tools_Option_Theme" xml:space="preserve">
+  <data name="Tools_Option_Theme" xml:space="preserve">
         <value>主题</value>
     </data>
     <data name="Tools_Option_Theme_Description" xml:space="preserve">
@@ -235,16 +217,7 @@
     <data name="Generic_Close" xml:space="preserve">
         <value>关闭</value>
     </data>
-    <data name="Prompt_AppNotInstalled_Title" xml:space="preserve">
-        <value>应用未安装</value>
-    </data>
-    <data name="Prompt_AppNotInstalled_Text" xml:space="preserve">
-        <value>所选择的APP - {0} - 没有在你的Quest上安装</value>
-    </data>
-    <data name="Prompt_AppNotInstalled_ChangeApp" xml:space="preserve">
-        <value>切换APP</value>
-    </data>
-    <data name="Generic_Retry" xml:space="preserve">
+  <data name="Generic_Retry" xml:space="preserve">
         <value>重试</value>
     </data>
     <data name="Generic_ContinueAnyway" xml:space="preserve">
@@ -459,7 +432,7 @@
         <value>完工!</value>
     </data>
     <data name="Patching_PatchingSuccess_Text" xml:space="preserve">
-        <value>你的游戏现在已经打完补丁啦 
+        <value>你的游戏现在已经打完补丁啦
 现在你可以安装Mod了！
 
 提示：如果你在头显里面看到了一个“恢复的应用”窗口，不必惊慌，只用点击取消即可。Oculus不会因为打Mod封号，所以没啥好担心的。</value>
