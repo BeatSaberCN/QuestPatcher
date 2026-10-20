@@ -174,17 +174,15 @@ namespace QuestPatcher.Core.Patching
             // First we add permissions and features to the APK for modding
             List<string> addingPermissions = new();
             List<string> addingFeatures = new();
-            var permissions = _config.PatchingOptions;
-            if (permissions.ExternalFiles)
-            {
-                // Technically, we only need READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE, but we also add MANAGE_EXTERNAL_STORAGE as this is what Android 11 needs instead
-                addingPermissions.AddRange(new[] {
-                    "android.permission.READ_EXTERNAL_STORAGE",
-                    "android.permission.WRITE_EXTERNAL_STORAGE",
-                    "android.permission.MANAGE_EXTERNAL_STORAGE",
-                });
-            }
 
+            // Technically, we only need READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE, but we also add MANAGE_EXTERNAL_STORAGE as this is what Android 11 needs instead
+            addingPermissions.AddRange([
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE",
+                "android.permission.MANAGE_EXTERNAL_STORAGE"
+            ]);
+            
+            var permissions = _config.PatchingOptions;
             if (permissions.Microphone)
             {
                 Log.Information("Adding microphone permission request . . .");
@@ -291,7 +289,7 @@ namespace QuestPatcher.Core.Patching
                 appElement.Attributes.Add(new AxmlAttribute("debuggable", AndroidNamespaceUri, DebuggableAttributeResourceId, true));
             }
 
-            if (permissions.ExternalFiles && !appElement.Attributes.Any(attribute => attribute.Name == "requestLegacyExternalStorage"))
+            if (!appElement.Attributes.Any(attribute => attribute.Name == "requestLegacyExternalStorage"))
             {
                 Log.Information("Adding legacy external storage flag . . .");
                 manifestModified = true;

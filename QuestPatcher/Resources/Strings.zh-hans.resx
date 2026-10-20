@@ -77,10 +77,7 @@
     <data name="Patching_PatchingOptions" xml:space="preserve">
         <value>补丁选项</value>
     </data>
-    <data name="PatchingOption_ExternalFiles" xml:space="preserve">
-        <value>允许读写外部存储空间</value>
-    </data>
-    <data name="PatchingOption_Debugging" xml:space="preserve">
+  <data name="PatchingOption_Debugging" xml:space="preserve">
         <value>允许调试</value>
     </data>
     <data name="PatchingOption_Microphone" xml:space="preserve">

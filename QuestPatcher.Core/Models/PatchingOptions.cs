@@ -10,8 +10,6 @@ namespace QuestPatcher.Core.Models
     /// </summary>
     public class PatchingOptions : INotifyPropertyChanged
     {
-        public bool ExternalFiles { get; set; } = true; // Not changeable in UI, since 90% of mods need this to work
-
         public bool Debuggable { get; set; } // Allows debugging with GDB or LLDB
 
         [Obsolete("Use HandTrackingType instead. This is only used to support loading legacy configs.", true)]

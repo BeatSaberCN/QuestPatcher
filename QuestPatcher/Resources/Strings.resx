@@ -183,9 +183,6 @@
   <data name="Patching_PatchingOptions" xml:space="preserve">
     <value>Patching Options</value>
   </data>
-  <data name="PatchingOption_ExternalFiles" xml:space="preserve">
-    <value>Allow External Files</value>
-  </data>
   <data name="PatchingOption_Debugging" xml:space="preserve">
     <value>Allow Debugging</value>
   </data>

@@ -867,15 +867,6 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allow External Files.
-        /// </summary>
-        public static string PatchingOption_ExternalFiles {
-            get {
-                return ResourceManager.GetString("PatchingOption_ExternalFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Hand Tracking Type.
         /// </summary>
         public static string PatchingOption_HandTracking {
