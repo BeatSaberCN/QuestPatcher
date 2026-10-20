@@ -321,15 +321,6 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Modding {0}.
-        /// </summary>
-        public static string Global_CurrentModding {
-            get {
-                return ResourceManager.GetString("Global_CurrentModding", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Display Logs.
         /// </summary>
         public static string Global_DisplayLogs {
@@ -425,15 +416,6 @@ namespace QuestPatcher.Resources {
         public static string Loading_QPLoading {
             get {
                 return ResourceManager.GetString("Loading_QPLoading", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change App.
-        /// </summary>
-        public static string Loading_UnhandledError_ChangeApp {
-            get {
-                return ResourceManager.GetString("Loading_UnhandledError_ChangeApp", resourceCulture);
             }
         }
         

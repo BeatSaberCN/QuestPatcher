@@ -413,9 +413,6 @@ NOTE: All save data, custom maps and cosmetics will remain safe!</value>
   <data name="Loading_UnhandledError_Title" xml:space="preserve">
     <value>Unhandled Load Error</value>
   </data>
-  <data name="Loading_UnhandledError_ChangeApp" xml:space="preserve">
-    <value>Change App</value>
-  </data>
   <data name="Prompt_OperationInProgress_Title" xml:space="preserve">
     <value>Operations still in progress!</value>
   </data>
@@ -512,9 +509,6 @@ Would you like to repatch your app with the required modloader?</value>
   </data>
   <data name="Global_WelcomeMessage" xml:space="preserve">
     <value>Welcome to {0} 2</value>
-  </data>
-  <data name="Global_CurrentModding" xml:space="preserve">
-    <value>Modding {0}</value>
   </data>
   <data name="OtherItems_LoadFailed_Title" xml:space="preserve">
     <value>Failed to load files</value>
