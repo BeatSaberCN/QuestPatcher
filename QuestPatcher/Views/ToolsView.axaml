@@ -67,20 +67,19 @@
         <StackPanel Orientation="Horizontal" Spacing="20">
           <TextBlock FontSize="20" Text="{x:Static res:Strings.Tools_Section_Options}"/>
           <TextBlock FontSize="10" VerticalAlignment="Bottom" FontWeight="Light" Text="{x:Static res:Strings.Tools_Section_Options_Description}"/>
-        </StackPanel> 
+        </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="False">
           <TextBlock VerticalAlignment="Center" FontSize="15" Text="{x:Static res:Strings.Tools_Option_Language}"/>
           <ComboBox SelectedIndex="{Binding SelectedLanguage}" IsEnabled="{Binding Locker.IsFree}">
             <ComboBoxItem Content="{x:Static res:Strings.Tools_Option_Language_Default}"/>
-            <ComboBoxItem Content="English"/> 
-            <ComboBoxItem Content="简体中文"/>
+            <ComboBoxItem Content="English" />
+            <ComboBoxItem Content="简体中文" />
           </ComboBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="10">
-          <ToggleButton IsChecked="{Binding Config.UseMirrorDownload}" IsEnabled="False">使用国内镜像</ToggleButton>
+          <ToggleButton IsChecked="{Binding Config.UseMirrorDownload}" IsEnabled="False">使用下载镜像</ToggleButton>
           <TextBlock VerticalAlignment="Center" FontSize="12">
-              通过国内镜像来加速内容下载 (暂不可用)
-              <!-- 通过国内镜像来加速内容下载，建议中国大陆用户打开（蓝色代表打开） -->
+            通过镜像来加速内容下载 (暂不可用)
           </TextBlock>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="10">
@@ -109,7 +108,7 @@
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}" />
                         </DataTemplate>
-                    </ComboBox.ItemTemplate>    
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="10">
