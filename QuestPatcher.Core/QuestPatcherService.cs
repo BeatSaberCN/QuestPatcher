@@ -133,14 +133,15 @@ namespace QuestPatcher.Core
             Log.CloseAndFlush();
         }
 
-        protected async Task RunStartup()
+        protected async Task<StartupResult> RunStartup()
         {
             HasLoaded = false;
             Log.Information("Starting QuestPatcher . . .");
 
             if (!await DebugBridge.IsPackageInstalled(Config.AppId))
             {
-                throw new GameNotInstalledException("Beat Saber is not installed!");
+                Log.Warning("App is not installed");
+                return StartupResult.GameNotInstalled;
             }
             Log.Information("App is installed");
 
@@ -149,13 +150,23 @@ namespace QuestPatcher.Core
             CoreModManager.Init();
             DowngradeManger.Init();
             DownloadMirrorManager.Init();
-            await InstallManager.LoadInstalledApp();
+
+            try
+            {
+                await InstallManager.LoadInstalledApp();
+            }
+            catch (GameIsCrackedException)
+            {
+                return StartupResult.GameIsCracked;
+            }
+
             if (InstallManager.InstalledApp!.ModLoader == ModLoader.Scotland2)
             {
                 await PatchingManager.SaveScotland2(false); // Make sure that Scotland2 is saved to the right location
             }
             await ModManager.LoadModsForCurrentApp();
             HasLoaded = true;
+            return StartupResult.Loaded;
         }
 
         /// <summary>

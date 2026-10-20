@@ -7,11 +7,6 @@ namespace QuestPatcher.Core.Patching
         public PatchingException(string message) : base(message) { }
         public PatchingException(string? message, Exception cause) : base(message, cause) { }
     }
-
-    public class GameNotInstalledException : PatchingException
-    {
-        public GameNotInstalledException(string message) : base(message) { }
-    }
     
     public class GameIsCrackedException : PatchingException
     {

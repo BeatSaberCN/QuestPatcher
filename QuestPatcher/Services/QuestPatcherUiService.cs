@@ -7,7 +7,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using QuestPatcher.Core;
 using QuestPatcher.Core.Models;
-using QuestPatcher.Core.Patching;
 using QuestPatcher.Core.Utils;
 using QuestPatcher.Models;
 using QuestPatcher.Resources;
@@ -126,77 +125,15 @@ namespace QuestPatcher.Services
                 _updateChecked = true;
             }
 
+            StartupResult result;
+            DialogBuilder builder;
             try
             {
-                await RunStartup();
-                // Files are not loaded during startup, since we need to check ADB status first
-                // So instead, we refresh the currently selected file copy after starting, if there is one
-                _otherItemsView?.RefreshFiles();
-            }
-            catch (GameNotInstalledException)
-            {
-                DialogBuilder builder1 = new()
-                {
-                    Title = "尚未安装BeatSaber", 
-                    Text = "请先安装正版BeatSaber！", 
-                    HideCancelButton = true
-                };
-                
-                builder1.OkButton.Text = "安装APK";
-                if (await builder1.OpenDialogue(_mainWindow))
-                {
-                    _operationLocker.FinishOperation(); //ui will be locked when the game is installing
-                    bool success = await OpenGameInstallerMenu(false);
-                    if (!success)
-                    {
-                        ExitApplication();
-                    }
-                }
-                else
-                {
-                    ExitApplication();
-                }
-            }
-            catch (GameIsCrackedException)
-            {
-                DialogBuilder builder1 = new()
-                {
-                    Title = "非原版BeatSaber！",
-                    Text = "检测到已安装的BeatSaber版本可能存在异常，\n" +
-                           "你安装的游戏有可能是盗版，QuestPatcher不兼容盗版，请支持正版！",
-                    HideCancelButton = true
-                };
-
-                var button1 = new ButtonInfo
-                {
-                    Text = "为何不兼容盗版？",
-                    CloseDialogue = false,
-                    ReturnValue = false,
-                    OnClick = () => Util.OpenWebpage("https://bs.wgzeyu.com/oq-guide-qp/#sbwc8866")
-                };
-
-                var button2 = new ButtonInfo
-                {
-                    Text = "如何购买正版？",
-                    CloseDialogue = false,
-                    ReturnValue = false,
-                    OnClick = () => Util.OpenWebpage("https://bs.wgzeyu.com/buy/#bs_quest")
-                };
-
-                var button3 = new ButtonInfo
-                {
-                    Text = "卸载当前版本",
-                    CloseDialogue = true,
-                    ReturnValue = true
-                };
-
-                builder1.WithButtons(button1, button2, button3);
-                await builder1.OpenDialogue(_mainWindow);
-                await InstallManager.UninstallApp();
+                result = await RunStartup();
             }
             catch (Exception ex)
             {
-                var builder = new DialogBuilder
+                builder = new DialogBuilder
                 {
                     Title = Strings.Loading_UnhandledError_Title,
                     Text = Strings.Loading_UnhandledError_Text,
@@ -206,10 +143,92 @@ namespace QuestPatcher.Services
                 await builder.OpenDialogue(_mainWindow);
                 Log.Error($"Exiting QuestPatcher due to unhandled load error: {ex}");
                 ExitApplication();
+                return;
             }
             finally
             {
                 _operationLocker.FinishOperation();
+            }
+
+            switch (result)
+            {
+                case StartupResult.Loaded:
+                    // Files are not loaded during startup, since we need to check ADB status first
+                    // So instead, we refresh the currently selected file copy after starting, if there is one
+                    if (_otherItemsView != null)
+                    {
+                        await _otherItemsView.RefreshFiles();
+                    }
+
+                    break;
+                case StartupResult.GameNotInstalled:
+                    builder = new DialogBuilder
+                    {
+                        Title = "尚未安装BeatSaber",
+                        Text = "请先安装正版BeatSaber！",
+                        HideCancelButton = true,
+                        OkButton = { Text = "安装APK" }
+                    };
+
+                    bool success = await builder.OpenDialogue(_mainWindow) && await OpenGameInstallerMenu(false);
+                    if (!success)
+                    {
+                        ExitApplication();
+                    }
+
+                    break;
+                case StartupResult.GameIsCracked:
+                    builder = new DialogBuilder
+                    {
+                        Title = "非原版BeatSaber！",
+                        Text = "检测到已安装的BeatSaber版本可能存在异常，\n" +
+                               "你安装的游戏有可能是盗版，QuestPatcher不兼容盗版，请支持正版！",
+                        HideOkButton = true,
+                        CancelButton = { Text = Strings.Generic_OK }
+                    };
+
+                    var button1 = new ButtonInfo
+                    {
+                        Text = "为何不兼容盗版？",
+                        CloseDialogue = false,
+                        ReturnValue = false,
+                        OnClick = () => Util.OpenWebpage("https://bs.wgzeyu.com/oq-guide-qp/#sbwc8866")
+                    };
+
+                    var button2 = new ButtonInfo
+                    {
+                        Text = "如何购买正版？",
+                        CloseDialogue = false,
+                        ReturnValue = false,
+                        OnClick = () => Util.OpenWebpage("https://bs.wgzeyu.com/buy/#bs_quest")
+                    };
+
+                    var button3 = new ButtonInfo { Text = "卸载当前版本", CloseDialogue = true, ReturnValue = true };
+
+                    builder.WithButtons(button1, button2, button3);
+
+                    if (await builder.OpenDialogue(_mainWindow))
+                    {
+                        _operationLocker.StartOperation();
+                        try
+                        {
+                            await InstallManager.UninstallApp();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(e, "Failed to uninstall cracked game");
+                        }
+                        finally
+                        {
+                            _operationLocker.FinishOperation();
+                        }
+                    }
+
+                    ExitApplication();
+                    break;
+                default:
+                    Log.Fatal("Unexpected startup result: {Result}", result);
+                    throw new UnreachableException("Unexpected startup result: " + result);
             }
         }
 

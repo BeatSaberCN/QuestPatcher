@@ -138,6 +138,7 @@ namespace QuestPatcher.Core
         /// Loads the currently installed APK from the Quest, and checks if it is patched.
         /// </summary>
         /// <exception cref="PatchingException">If the APK contained no 32-bit or 64-bit il2cpp.so, and so is not valid for use by QuestPatcher</exception>
+        /// <exception cref="GameIsCrackedException">If a cracked game is detected</exception>
         public async Task LoadInstalledApp()
         {
             Log.Information("Downloading APK from the Quest . . .");
@@ -167,6 +168,7 @@ namespace QuestPatcher.Core
 
             if (apk.ContainsFile("lib/arm64-v8a/libfrda.so") || apk.ContainsFile("lib/arm64-v8a/libscript.so"))
             {
+                Log.Warning("Game is cracked!");
                 throw new GameIsCrackedException("Game is cracked!");
             }
 
