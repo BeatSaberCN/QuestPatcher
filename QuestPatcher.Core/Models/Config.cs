@@ -7,18 +7,7 @@ namespace QuestPatcher.Core.Models
 {
     public class Config : INotifyPropertyChanged
     {
-        public string AppId
-        {
-            get;
-            set
-            {
-                if (value != field)
-                {
-                    field = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        } = SharedConstants.BeatSaberPackageID;
+        public string AppId => SharedConstants.BeatSaberPackageID;
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Language Language { get; set; } = Language.Default;

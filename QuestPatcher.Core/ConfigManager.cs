@@ -3,7 +3,6 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using QuestPatcher.Core.Models;
-using QuestPatcher.Core.Utils;
 using Serilog;
 
 namespace QuestPatcher.Core
@@ -24,12 +23,10 @@ namespace QuestPatcher.Core
         public string ConfigPath { get; }
 
         private Config? _loadedConfig;
-        private readonly string _legacyAppIdPath;
 
         public ConfigManager(SpecialFolders specialFolders)
         {
             ConfigPath = Path.Combine(specialFolders.DataFolder, "config.json");
-            _legacyAppIdPath = Path.Combine(specialFolders.DataFolder, "appId.txt");
         }
 
         /// <summary>
@@ -44,7 +41,6 @@ namespace QuestPatcher.Core
                 _loadedConfig = LoadConfig();
                 _loadedConfig.UseMirrorDownload = false; // force not using mirror
                 _loadedConfig.Language = Language.ChineseSimplified; // force Chinese Simplified
-                _loadedConfig.AppId = SharedConstants.BeatSaberPackageID; // force beat saber
                 _loadedConfig.ExpertMode = _loadedConfig.ExpertMode; // sync advance options with expert mode
             }
 
@@ -77,16 +73,6 @@ namespace QuestPatcher.Core
             {
                 Log.Warning(ex, "Failed to load the config file, overwriting with default config instead!");
                 return SaveDefaultConfig();
-            }
-
-            // In the past, an appId.txt file was used to store the app ID
-            // Load this into the config, then delete the old file
-            if (File.Exists(_legacyAppIdPath))
-            {
-                Log.Information("Loading app ID from legacy appId.txt");
-                newConfig.AppId = File.ReadAllText(_legacyAppIdPath);
-                File.Delete(_legacyAppIdPath);
-                SaveConfig(newConfig);
             }
 
             return newConfig;
