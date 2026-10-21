@@ -2,9 +2,6 @@
   {
     "supportedVersions": ">=2.2.2",
     "downloads": {
-      "UberApkSigner": {
-        "any": "https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar"
-      },
       "Modloader64": {
         "any": "https://github.com/sc2ad/QuestLoader/releases/download/v1.3.0/libmodloader64.so"
       },
@@ -27,14 +24,26 @@
         "windows": "https://dl.google.com/android/repository/platform-tools-latest-windows.zip",
         "mac": "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip",
         "linux": "https://dl.google.com/android/repository/platform-tools-latest-linux.zip"
+      }
+    },
+    "sha256": {
+      "Modloader64": {
+        "any": "6fe00de6f4147b26217492bee72320788017c007dbff271b97dbbe4eff817d20"
       },
-      "Jre": {
-        "windows": "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9.zip",
-        "mac": "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_mac_hotspot_11.0.11_9.tar.gz",
-        "linux": "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.11_9.tar.gz"
+      "Main64": {
+        "any": "0c0c66dcc76356b08f96c3308a27f2d4681b38cda6e1951d139e35ba947565e0"
       },
-      "OvrPlatformSdk": {
-        "any": "https://securecdn.oculus.com/binaries/download/?id=1180710875385946&access_token=OC%7C1196467420370658%7C"
+      "Modloader32": {
+        "any": "01a35fb4cca29a6265b142828381dc7726b0a2c31833d3678f4d31b68e1e0cb5"
+      },
+      "Main32": {
+        "any": "8991f1584813f5bac30665ecc21e5aa8ed08fdf8856b8bdea267dbf4bfb86517"
+      },
+      "LibMainLoader": {
+        "any": "5e3ef9701b89ae911113b0adad8f5d5b58f644867cdcd18f8a51ac807df60119"
+      },
+      "Scotland2": {
+        "any": "3c34627ede42c9281a0d28147bc222424c5dc451263a14c7a9ab6a88331890fe"
       }
     }
   }
