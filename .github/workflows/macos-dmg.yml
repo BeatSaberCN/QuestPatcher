@@ -14,6 +14,8 @@ on:
       - 'installer/**'
       - '.github/workflows/standalone.yml'
       - '.github/workflows/windows-installer.yml'
+      - '.github/workflows/verify-download-hashes.yml'
+      - '.github/scripts/**'
   workflow_dispatch:
 
 jobs:
