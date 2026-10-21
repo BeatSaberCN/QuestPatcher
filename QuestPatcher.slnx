@@ -1,9 +1,16 @@
 <Solution>
-  <Folder Name="/Solution Items/">
-    <File Path=".editorconfig" />
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/scripts/">
+    <File Path=".github/scripts/Verify-DownloadHashes.ps1" />
+  </Folder>
+  <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/macos-dmg.yml" />
     <File Path=".github/workflows/standalone.yml" />
+    <File Path=".github/workflows/verify-download-hashes.yml" />
     <File Path=".github/workflows/windows-installer.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
     <File Path="global.json" />
