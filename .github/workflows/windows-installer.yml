@@ -4,6 +4,7 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
 
 jobs:
   build:
@@ -11,9 +12,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
     - name: Download Inno Setup
@@ -24,13 +25,21 @@ jobs:
     - name: Install Inno Setup
       run: '../is.exe /VERYSILENT /NORESTART /ALLUSERS'
     - name: Set version
+      if: ${{ github.event_name == 'release' }}
       run: '"${{ github.event.release.tag_name }}" | Out-File -NoNewline -FilePath ./VERSION'
     - name: Build QuestPatcher
       run: dotnet publish QuestPatcher/QuestPatcher.csproj -c Release -r win-x64 --self-contained
     - name: Compile Installer
       run: '& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /f installer/installer.iss'
+    - name: Artifact Upload
+      if: ${{ github.event_name != 'release' }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: QuestPatcher-windows.exe
+        path: ./installer/QuestPatcher-windows.exe
     - name: Upload Release Asset
-      id: upload-release-asset 
+      id: upload-release-asset
+      if: ${{ github.event_name == 'release' }}
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
