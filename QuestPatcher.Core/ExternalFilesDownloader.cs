@@ -28,11 +28,7 @@ namespace QuestPatcher.Core
         Main64,
         Scotland2,
         LibMainLoader,
-        ApkTool,
-        UberApkSigner,
-        PlatformTools,
-        Jre,
-        OvrPlatformSdk
+        PlatformTools
     }
 
     /// <summary>
@@ -163,13 +159,6 @@ namespace QuestPatcher.Core
                     },
                     ExtractionFolder = "platform-tools",
                     IsExecutable = true
-                }
-            },
-            {
-                ExternalFileType.OvrPlatformSdk,
-                new FileInfo
-                {
-                    SaveName = "OVRPlatformSDK.zip".ForAllSystems()
                 }
             }
         };
