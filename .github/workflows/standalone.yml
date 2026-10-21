@@ -42,9 +42,9 @@ jobs:
         shell: pwsh
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
     - name: Install dependencies
@@ -58,7 +58,7 @@ jobs:
       run: cp LICENSE QuestPatcher/bin/Release/net10.0/${{ matrix.target.runtime }}/publish/LICENSE.txt
     - name: Artifact Upload ${{ matrix.target.runtime }}
       if: ${{ github.event_name != 'release' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ matrix.target.runtime }}
         path: QuestPatcher/bin/Release/net10.0/${{ matrix.target.runtime }}/publish/
