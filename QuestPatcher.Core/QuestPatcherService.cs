@@ -19,7 +19,7 @@ namespace QuestPatcher.Core
 {
     /// <summary>
     /// The main class that manages most QuestPatcher services.
-    /// Allows user prompts etc. to be abstracted through 
+    /// Allows user prompts etc. to be abstracted through
     /// </summary>
     public abstract class QuestPatcherService : INotifyPropertyChanged
     {
@@ -34,7 +34,7 @@ namespace QuestPatcher.Core
         protected IUserPrompter Prompter { get; }
 
         protected InfoDumper InfoDumper { get; }
-        
+
         protected DowngradeManger DowngradeManger { get; }
         protected CoreModsManager CoreModManager { get; }
         protected DownloadMirrorManager DownloadMirrorManager { get; } = new();
@@ -61,7 +61,7 @@ namespace QuestPatcher.Core
             _configManager.GetOrLoadConfig(); // Load the config file
             FilesDownloader = new ExternalFilesDownloader(Config, SpecialFolders, DownloadMirrorManager);
             DebugBridge = new AndroidDebugBridge(FilesDownloader, prompter, ExitApplication);
-            OtherFilesManager = new OtherFilesManager(Config, DebugBridge);
+            OtherFilesManager = new OtherFilesManager(DebugBridge);
             ModManager = new ModManager(Config, DebugBridge, OtherFilesManager);
             InstallManager = new InstallManager(SpecialFolders, DebugBridge, Config, ExitApplication);
             ModManager.RegisterModProvider(new QModProvider(ModManager, Config, DebugBridge, FilesDownloader));
@@ -232,7 +232,7 @@ namespace QuestPatcher.Core
 
             await Task.Delay(TimeSpan.FromSeconds(5));
             Log.Information("Waiting for 5 seconds to give adb some time to clean up");
-            
+
             await DebugBridge.PrepareAdbPath(); // Re-download ADB if necessary
 
             if (InstallManager.InstalledApp?.ModLoader == ModLoader.Scotland2)
@@ -241,7 +241,7 @@ namespace QuestPatcher.Core
                 await PatchingManager.SaveScotland2(true);
             }
         }
-        
+
         public async Task CheckForUpdates()
         {
             try
@@ -252,7 +252,7 @@ namespace QuestPatcher.Core
                 var res = JsonNode.Parse(
                     await client.GetStringAsync(
                         @"https://api.github.com/repos/BeatSaberCN/QuestPatcher/releases/latest"));
-                
+
                 string tagName = res?["tag_name"]?.ToString() ?? throw new Exception("Failed to check update, tag name is null");
 
                 // old versions of QP CN were not SemVer valid

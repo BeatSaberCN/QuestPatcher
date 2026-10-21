@@ -1,52 +1,68 @@
-﻿{
-  "com.beatgames.beatsaber": [
-    {
-      "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/sabers/",
-      "nameSingular": "自定义光剑",
-      "namePlural": "自定义光剑",
-      "supportedExtensions": [ "qsaber" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/notes/",
-      "nameSingular": "自定义方块",
-      "namePlural": "自定义方块",
-      "supportedExtensions": [ "qbloq" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/walls/",
-      "nameSingular": "自定义墙",
-      "namePlural": "自定义墙",
-      "supportedExtensions": [ "qwall" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/",
-      "nameSingular": "枕头材质",
-      "namePlural": "枕头材质",
-      "supportedExtensions": [ "png", "jpg", "jpeg" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/",
-      "nameSingular": "枕头形状",
-      "namePlural": "枕头形状",
-      "supportedExtensions": [ "json" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/Whackers/",
-      "nameSingular": "光剑（新版）",
-      "namePlural": "光剑（新版）",
-      "supportedExtensions": [ "whacker" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/Cyoobs/",
-      "nameSingular": "方块（新版）",
-      "namePlural": "方块（新版）",
-      "supportedExtensions": [ "cyoob" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/Boxes/",
-      "nameSingular": "墙壁（新版）",
-      "namePlural": "墙壁（新版）",
-      "supportedExtensions": [ "box" ]
-    }
-  ]
-}
+﻿[
+  {
+    "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/sabers/",
+    "nameSingular": "自定义光剑",
+    "namePlural": "自定义光剑",
+    "supportedExtensions": [
+      "qsaber"
+    ]
+  },
+  {
+    "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/notes/",
+    "nameSingular": "自定义方块",
+    "namePlural": "自定义方块",
+    "supportedExtensions": [
+      "qbloq"
+    ]
+  },
+  {
+    "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/walls/",
+    "nameSingular": "自定义墙",
+    "namePlural": "自定义墙",
+    "supportedExtensions": [
+      "qwall"
+    ]
+  },
+  {
+    "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/",
+    "nameSingular": "枕头材质",
+    "namePlural": "枕头材质",
+    "supportedExtensions": [
+      "png",
+      "jpg",
+      "jpeg"
+    ]
+  },
+  {
+    "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/",
+    "nameSingular": "枕头形状",
+    "namePlural": "枕头形状",
+    "supportedExtensions": [
+      "json"
+    ]
+  },
+  {
+    "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/Whackers/",
+    "nameSingular": "光剑（新版）",
+    "namePlural": "光剑（新版）",
+    "supportedExtensions": [
+      "whacker"
+    ]
+  },
+  {
+    "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/Cyoobs/",
+    "nameSingular": "方块（新版）",
+    "namePlural": "方块（新版）",
+    "supportedExtensions": [
+      "cyoob"
+    ]
+  },
+  {
+    "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/Boxes/",
+    "nameSingular": "墙壁（新版）",
+    "namePlural": "墙壁（新版）",
+    "supportedExtensions": [
+      "box"
+    ]
+  }
+]

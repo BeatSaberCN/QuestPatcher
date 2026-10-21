@@ -54,12 +54,6 @@ namespace QuestPatcher.ViewModels
             _mainWindow = mainWindow;
             _browseManager = browseManager;
 
-            // Whenever the App ID changes, reset the selected file copy to the first in this list
-            filesManager.PropertyChanged += (_, args) =>
-            {
-                if (args.PropertyName == nameof(filesManager.CurrentDestinations)) { OnCurrentDestinationsChanged(); }
-            };
-
             locker.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(locker.IsFree)) { this.RaisePropertyChanged(nameof(CanDeleteSelectedFiles)); this.RaisePropertyChanged(nameof(CanUseFileCopies)); }
@@ -69,21 +63,8 @@ namespace QuestPatcher.ViewModels
                 this.RaisePropertyChanged(nameof(CanDeleteSelectedFiles));
             };
 
-            OnCurrentDestinationsChanged();
+            SelectedFileCopy = FilesManager.CurrentDestinations.FirstOrDefault();
         }
-
-        private void OnCurrentDestinationsChanged()
-        {
-            if (FilesManager.CurrentDestinations.Count > 0)
-            {
-                SelectedFileCopy = FilesManager.CurrentDestinations[0];
-            }
-            else
-            {
-                SelectedFileCopy = null;
-            }
-        }
-
 
         private async void OnSelectedFileCopyChanged()
         {
@@ -149,7 +130,7 @@ namespace QuestPatcher.ViewModels
                 {
                     HideCancelButton = true
                 };
-                
+
                 if (failed > 1)
                 {
                     // If multiple files failed, we can display a dialog saying how many succeeded and how many failed
@@ -160,7 +141,7 @@ namespace QuestPatcher.ViewModels
                 {
                     // Otherwise, it'd be more useful to display a dialog with just the one exception
                     builder.Title = Strings.OtherItems_DeleteFailed_Title;
-                    builder.Text = string.Format(Strings.OtherItems_DeleteFailed_Text, Path.GetFileName(lastFailed)); 
+                    builder.Text = string.Format(Strings.OtherItems_DeleteFailed_Text, Path.GetFileName(lastFailed));
                     Debug.Assert(lastException != null);
                     builder.WithException(lastException);
                 }

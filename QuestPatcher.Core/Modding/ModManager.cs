@@ -329,7 +329,7 @@ namespace QuestPatcher.Core.Modding
             _modConfig?.Mods.Add(mod);
             foreach (var copyType in mod.FileCopyTypes)
             {
-                _otherFilesManager.RegisterFileCopy(_config.AppId, copyType);
+                _otherFilesManager.RegisterFileCopy(copyType);
             }
             _awaitingConfigSave = true;
         }
@@ -344,7 +344,7 @@ namespace QuestPatcher.Core.Modding
             (mod.IsLibrary ? Libraries : Mods).Remove(mod);
             foreach (var copyType in mod.FileCopyTypes)
             {
-                _otherFilesManager.RemoveFileCopy(_config.AppId, copyType);
+                _otherFilesManager.RemoveFileCopy(copyType);
             }
             _modConfig?.Mods.Remove(mod);
             _awaitingConfigSave = true;
