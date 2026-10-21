@@ -24,7 +24,7 @@ namespace QuestPatcher.ViewModels
         public OperationLocker Locker { get; }
 
         public ThemeManager ThemeManager { get; }
-        
+
         public Language SelectedLanguage
         {
             get => Config.Language;
@@ -33,7 +33,7 @@ namespace QuestPatcher.ViewModels
                 if (value != Config.Language)
                 {
                     // Use ToCultureInfo to check if the new language is actually a different culture
-                    // E.g. This is to account for the fact that a change from English to the system default 
+                    // E.g. This is to account for the fact that a change from English to the system default
                     // isn't actually a change in language if the system default IS English
                     string newCultureName = value.ToCultureInfo().Name;
                     string oldCultureName = Config.Language.ToCultureInfo().Name;
@@ -80,10 +80,10 @@ namespace QuestPatcher.ViewModels
         private readonly ModManager _modManager;
         private readonly Action _quit;
 
-        public ToolsViewModel(Config config, ProgressViewModel progressView, OperationLocker locker, 
-            Window mainWindow, SpecialFolders specialFolders, InstallManager installManager, 
-            AndroidDebugBridge debugBridge, QuestPatcherUiService uiService, InfoDumper dumper, ThemeManager themeManager, 
-            BrowseImportManager browseManager, ModManager modManager, Action quit)
+        public ToolsViewModel(Config config, ProgressViewModel progressView, OperationLocker locker,
+            Window mainWindow, SpecialFolders specialFolders, InstallManager installManager,
+            AndroidDebugBridge debugBridge, QuestPatcherUiService uiService, InfoDumper dumper,
+            ThemeManager themeManager, BrowseImportManager browseManager, ModManager modManager, Action quit)
         {
             Config = config;
             ProgressView = progressView;
@@ -106,7 +106,7 @@ namespace QuestPatcher.ViewModels
                 _isAdbLogging = false;
                 this.RaisePropertyChanged(nameof(AdbButtonText));
             };
-            
+
             _installManager.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(_installManager.InstalledApp))
@@ -116,15 +116,15 @@ namespace QuestPatcher.ViewModels
                     SubscribeToApkEvents();
                 }
             };
-            
+
             SubscribeToApkEvents();
         }
-        
+
         private void SubscribeToApkEvents()
         {
             var apk = _installManager.InstalledApp;
             if (apk == null) return;
-            
+
             apk.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(ApkInfo.IsModded))
@@ -139,7 +139,7 @@ namespace QuestPatcher.ViewModels
         {
             _uiService.OpenDowngradeMenu();
         }
-        
+
         public async void UninstallAndInstall()
         {
             DialogBuilder builder1 = new()
@@ -148,9 +148,9 @@ namespace QuestPatcher.ViewModels
                 Text = "换版本会删除所有的Mod，但不会影响您的歌曲、模型资源。降级完成后您可以把对应版本的Mod重新装回去，即可继续使用这些资源。\n\n点击继续并选择目标版本的游戏APK和可选OBB即可完成更换版本",
             };
             builder1.OkButton.Text = "继续";
-            
+
             if (!await builder1.OpenDialogue(_mainWindow)) return;
-            
+
             _ = _uiService.OpenGameInstallerMenu(true);
         }
 
@@ -189,7 +189,7 @@ namespace QuestPatcher.ViewModels
                 Log.Error(ex, "卸载失败！");
             }
         }
-        
+
         public async void DeleteAllMods()
         {
             DialogBuilder builder = new()
@@ -200,7 +200,7 @@ namespace QuestPatcher.ViewModels
             builder.OkButton.Text = "好的，删掉";
             builder.CancelButton.Text = "算了，我再想想";
             if (!await builder.OpenDialogue(_mainWindow)) return;
-            
+
             Locker.StartOperation();
             try
             {
@@ -318,11 +318,6 @@ namespace QuestPatcher.ViewModels
             _uiService.OpenRepatchMenu();
         }
 
-        public async void ChangeApp()
-        {
-            await _uiService.OpenChangeAppMenu(false);
-        }
-
         public async void RestartApp()
         {
             try
@@ -365,11 +360,11 @@ namespace QuestPatcher.ViewModels
                 Verb = "open"
             });
         }
-        
+
         private async void ShowLanguageChangeDialog()
         {
-            Strings.Culture = Config.Language.ToCultureInfo(); // Update the resource language so the dialog is in the correct language 
-            
+            Strings.Culture = Config.Language.ToCultureInfo(); // Update the resource language so the dialog is in the correct language
+
             var builder = new DialogBuilder
             {
                 Title = Strings.Tools_Option_Language_Title,
@@ -388,7 +383,7 @@ namespace QuestPatcher.ViewModels
 
                 _quit();
             };
-            
+
 
             await builder.OpenDialogue(_mainWindow);
         }

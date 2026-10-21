@@ -1,36 +1,4 @@
 ﻿{
-  "com.AnotherAxiom.GorillaTag": [
-    {
-      "path": "/sdcard/ModData/com.AnotherAxiom.GorillaTag/Mods/GorillaCosmetics/Hats/",
-      "nameSingular": "Hat",
-      "namePlural": "Hats",
-      "supportedExtensions": [ "hat" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.AnotherAxiom.GorillaTag/Mods/MonkeMapLoader/CustomMaps/",
-      "nameSingular": "Map",
-      "namePlural": "Maps",
-      "supportedExtensions": [ "gtmap" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.AnotherAxiom.GorillaTag/Mods/GorillaCosmetics/Materials/",
-      "nameSingular": "Material",
-      "namePlural": "Materials",
-      "supportedExtensions": [ "gmat" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.AnotherAxiom.GorillaTag/Mods/MonkeSkies/",
-      "nameSingular": "MonkeSkies background",
-      "namePlural": "MonkeSkies backgrounds",
-      "supportedExtensions": [ "png", "jpg", "jpeg" ]
-    },
-    {
-      "path": "/sdcard/ModData/com.AnotherAxiom.GorillaTag/Mods/MonkeComputer/Backgrounds/",
-      "nameSingular": "MonkeComputer background",
-      "namePlural": "MonkeComputer backgrounds",
-      "supportedExtensions": [ "png", "jpg", "jpeg" ]
-    }
-  ],
   "com.beatgames.beatsaber": [
     {
       "path": "/sdcard/ModData/com.beatgames.beatsaber/Mods/Qosmetics/sabers/",

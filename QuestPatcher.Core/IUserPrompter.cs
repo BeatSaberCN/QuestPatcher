@@ -6,10 +6,8 @@ namespace QuestPatcher.Core
 {
     public interface IUserPrompter
     {
-        Task<bool> PromptAppNotInstalled();
-
         Task PromptUpdateAvailable(string latest);
-        
+
         Task PromptUpdateCheckFailed(Exception? exception);
 
         Task<bool> PromptAdbDisconnect(DisconnectionType type);

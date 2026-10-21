@@ -7,7 +7,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using QuestPatcher.Core;
 using QuestPatcher.Core.Models;
-using QuestPatcher.Core.Utils;
 using QuestPatcher.Models;
 using QuestPatcher.Resources;
 using QuestPatcher.Utils;
@@ -63,7 +62,7 @@ namespace QuestPatcher.Services
 
             _appLifetime.MainWindow = _mainWindow;
             var prompter = (UIPrompter) Prompter;
-            prompter.Init(_mainWindow, Config, this, SpecialFolders);
+            prompter.Init(_mainWindow);
 
             _mainWindow.Opened += async (_, _) => await LoadAndHandleErrors();
             _mainWindow.Closing += OnMainWindowClosing;
@@ -258,26 +257,6 @@ namespace QuestPatcher.Services
         }
 
         /// <summary>
-        /// Opens a menu which allows the user to change app ID
-        /// </summary>
-        public async Task OpenChangeAppMenu(bool quitIfNotSelected)
-        {
-            Config.AppId = SharedConstants.BeatSaberPackageID;
-            DialogBuilder builder = new()
-            {
-                Title = "该改版无法Mod其他应用！",
-                Text = "因为加了汉化，核心Mod安装等专对BeatSaber的功能，所以没有办法给其他游戏添加mod，属实抱歉~"
-            };
-            builder.OkButton.Text = "好的";
-            builder.HideCancelButton = true;
-            await builder.OpenDialogue(_mainWindow);
-            if (quitIfNotSelected)
-            {
-                ExitApplication();
-            }
-        }
-
-        /// <summary>
         /// Opens a window that allows the user to change the modloader they have installed by re-patching their app.
         /// </summary>
         /// <param name="preferredModloader">The modloader that will be selected for patching by default. The user can change this.</param>
@@ -293,7 +272,7 @@ namespace QuestPatcher.Services
             menuWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             await menuWindow.ShowDialog(_mainWindow);
         }
-        
+
         public void OpenDowngradeMenu()
         {
             Window downgradeWindow = new DowngradeWindow();
@@ -303,7 +282,7 @@ namespace QuestPatcher.Services
             downgradeWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             _ = downgradeWindow.ShowDialog(_mainWindow);
         }
-        
+
         /// <summary>
         /// Open the game installer menu to install a new version of the game.
         /// Will reload QuestPatcher if the installation is successful.

@@ -40,11 +40,6 @@ namespace QuestPatcher
     public class DialogBuilder
     {
         /// <summary>
-        /// Used for the very important text.
-        /// </summary>
-        private static readonly Random Random = new();
-
-        /// <summary>
         /// Title of the dialogue window
         /// </summary>
         public string? Title { get; set; }
@@ -172,24 +167,6 @@ namespace QuestPatcher
 
                 buttonsPanel.Children.Add(button);
             }
-
-            /*
-            // Make sure to only show the normal button pretty rarely
-            var normalButton = dialogue.FindControl<Button>("NormalButton")!;
-            if (Random.Next(50) == 0)
-            {
-                normalButton.IsVisible = true;
-                normalButton.Click += (_, _) =>
-                {
-                    // Show the important facts window
-                    Window factsWindow = new FactsWindow
-                    {
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner
-                    };
-                    factsWindow.ShowDialog(dialogue);
-                };
-            }
-            */
 
             dialogue.Closed += (_, _) =>
             {

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using QuestPatcher.Core;
-using QuestPatcher.Core.Models;
 using QuestPatcher.Resources;
-using QuestPatcher.Services;
 using QuestPatcher.Utils;
 using QuestPatcher.ViewModels;
 using QuestPatcher.Views;
@@ -16,22 +13,16 @@ namespace QuestPatcher
     public class UIPrompter : IUserPrompter
     {
         private Window? _mainWindow;
-        private Config? _config;
-        private QuestPatcherUiService? _uiService;
-        private SpecialFolders? _specialFolders;
 
         /// <summary>
         /// This exists instead of a constructor since the prompter must be immediately passed on QuestPatcherService's creation, so we initialise its members after the fact.
         /// Maybe there's a better workaround, but this works fine for now
         /// </summary>
-        public void Init(Window mainWindow, Config config, QuestPatcherUiService uiService, SpecialFolders specialFolders)
+        public void Init(Window mainWindow)
         {
             _mainWindow = mainWindow;
-            _config = config;
-            _uiService = uiService;
-            _specialFolders = specialFolders;
         }
-        
+
         public async Task PromptUpdateAvailable(string latest)
         {
             DialogBuilder builder = new()
@@ -106,34 +97,6 @@ namespace QuestPatcher
             }
 
             await builder.OpenDialogue(_mainWindow);
-        }
-        
-        public Task<bool> PromptAppNotInstalled()
-        {
-            Debug.Assert(_config != null);
-
-            var builder = new DialogBuilder
-            {
-                Title = Strings.Prompt_AppNotInstalled_Title,
-                Text = string.Format(Strings.Prompt_AppNotInstalled_Text, _config.AppId),
-                HideOkButton = true
-            };
-            builder.CancelButton.Text = Strings.Generic_Close;
-            builder.WithButtons(
-                new ButtonInfo
-                {
-                    Text = Strings.Prompt_AppNotInstalled_ChangeApp,
-                    CloseDialogue = true,
-                    ReturnValue = true,
-                    OnClick = async () =>
-                    {
-                        Debug.Assert(_uiService != null);
-                        await _uiService.OpenChangeAppMenu(true);
-                    }
-                }
-            );
-
-            return builder.OpenDialogue(_mainWindow);
         }
 
         public Task<bool> PromptAdbDisconnect(DisconnectionType type)

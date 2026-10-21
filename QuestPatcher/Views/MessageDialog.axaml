@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200" 
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
         SizeToContent="WidthAndHeight"
         CanResize="False"
         x:Class="QuestPatcher.Views.MessageDialog"
@@ -16,7 +16,6 @@
             <DockPanel Margin="0 20 0 0">
               <Panel DockPanel.Dock="Top">
                 <TextBlock Name="TitleText" Padding="8" HorizontalAlignment="Center" TextDecorations="Underline"/>
-                <!-- <Button IsVisible="False" Content="" Name="NormalButton" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="0" Padding="0 5 0 0" Background="#00000000"/> -->
               </Panel>
               <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical" Spacing="15" Margin="10 0 10 10">
                 <TextBlock Name="MessageText" TextAlignment="Center" FontSize="14" MaxWidth="450" TextWrapping="Wrap"/>
