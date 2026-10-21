@@ -87,9 +87,10 @@ namespace QuestPatcher.Core
             }
 
             /// <summary>
-            /// Download links as SystemSpecificValues
+            /// Download links as SystemSpecificValues.
+            /// Keyed by the name of the <see cref="ExternalFileType"/>, so that unknown file types can be ignored.
             /// </summary>
-            public Dictionary<ExternalFileType, SystemSpecificValue<string>> Downloads { get; set; }
+            public Dictionary<string, SystemSpecificValue<string>> Downloads { get; set; }
 #nullable enable
         }
 
@@ -241,7 +242,11 @@ namespace QuestPatcher.Core
             {
                 foreach (string fileType in File.ReadAllLines(_fullyDownloadedPath))
                 {
-                    _fullyDownloaded.Add(Enum.Parse<ExternalFileType>(fileType));
+                    // Skip file types that no longer exist
+                    if (Enum.TryParse<ExternalFileType>(fileType, out var type))
+                    {
+                        _fullyDownloaded.Add(type);
+                    }
                 }
             }
             catch (FileNotFoundException)
@@ -292,8 +297,14 @@ namespace QuestPatcher.Core
             // Download sets are in order, highest priority comes first
             foreach (var downloadSet in downloadSets)
             {
-                foreach (var (type, specificValue) in downloadSet.Downloads)
+                foreach (var (typeName, specificValue) in downloadSet.Downloads)
                 {
+                    if (!Enum.TryParse<ExternalFileType>(typeName, out var type))
+                    {
+                        Log.Debug("Ignoring unknown file type {Type} in download URLs", typeName);
+                        continue;
+                    }
+
                     if (downloadUrls.ContainsKey(type))
                     {
                         downloadUrls[type].Add(specificValue.Value);
