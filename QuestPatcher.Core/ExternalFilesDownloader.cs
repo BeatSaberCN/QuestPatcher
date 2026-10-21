@@ -460,6 +460,7 @@ namespace QuestPatcher.Core
             const int BufferSize = 4096;
 
             using var resp = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            resp.EnsureSuccessStatusCode(); // Otherwise the error page would be saved as the file
             using var respStream = await resp.Content.ReadAsStreamAsync();
 
             // Attempt to find the content length from the headers
