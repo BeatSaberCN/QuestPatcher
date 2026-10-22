@@ -457,10 +457,7 @@ NOTE: All save data, custom maps and cosmetics will remain safe!</value>
   </data>
   <data name="Mod_WrongModLoader_Text" xml:space="preserve">
     <value>The mod you are trying to install needs the mod loader {0}. However, your app has the mod loader {1} installed.
-Would you like to repatch your app with the required modloader?</value>
-  </data>
-  <data name="Mod_WrongModLoader_Repatch" xml:space="preserve">
-    <value>Repatch</value>
+You can change the mod loader by pressing "Repatch App" on the Tools page</value>
   </data>
   <data name="Generic_NotNow" xml:space="preserve">
     <value>Not now</value>

@@ -31,7 +31,6 @@ namespace QuestPatcher
         private readonly InstallManager _installManager;
         private readonly ExternalFilesDownloader _filesDownloader;
         private readonly OperationLocker _locker;
-        private readonly QuestPatcherUiService _uiService;
         private readonly SpecialFolders _specialFolders;
         private readonly CoreModsManager _coreModsManager;
 
@@ -43,7 +42,7 @@ namespace QuestPatcher
         private Queue<FileImportInfo>? _currentImportQueue;
 
         public BrowseImportManager(OtherFilesManager otherFilesManager, ModManager modManager, Window mainWindow,
-            InstallManager installManager, OperationLocker locker, QuestPatcherUiService uiService,
+            InstallManager installManager, OperationLocker locker,
             ExternalFilesDownloader filesDownloader, SpecialFolders specialFolders, CoreModsManager coreModsManager)
         {
             _otherFilesManager = otherFilesManager;
@@ -51,7 +50,6 @@ namespace QuestPatcher
             _mainWindow = mainWindow;
             _installManager = installManager;
             _locker = locker;
-            _uiService = uiService;
             _filesDownloader = filesDownloader;
             _specialFolders = specialFolders;
             _coreModsManager = coreModsManager;
@@ -632,12 +630,12 @@ namespace QuestPatcher
                 await _coreModsManager.InstallCoreModsAsync(mods, curModLoader.Value);
                 return true;
             }
-            catch (ModLoaderMismatchException)
+            catch (ModLoaderMismatchException e)
             {
                 var dialog = new DialogBuilder
                 {
-                    Title = "不匹配的Mod注入器",
-                    Text = "正在尝试安装的Mod需要的Mod注入器和当前使用的Mod注入器不匹配\n可以在工具页面点击 “重新打补丁” 来更换Mod注入器",
+                    Title = Strings.Mod_WrongModLoader_Title,
+                    Text = string.Format(Strings.Mod_WrongModLoader_Text, e.ModLoader, e.InstalledModLoader),
                     HideCancelButton = true
                 };
                 await dialog.OpenDialogue(_mainWindow);
@@ -689,14 +687,10 @@ namespace QuestPatcher
                 var builder = new DialogBuilder
                 {
                     Title = Strings.Mod_WrongModLoader_Title,
-                    Text = String.Format(Strings.Mod_WrongModLoader_Text, mod.ModLoader, _installManager.InstalledApp?.ModLoader)
+                    Text = String.Format(Strings.Mod_WrongModLoader_Text, mod.ModLoader, _installManager.InstalledApp?.ModLoader),
+                    HideCancelButton = true
                 };
-                builder.OkButton.Text = Strings.Mod_WrongModLoader_Repatch;
-                builder.CancelButton.Text = Strings.Generic_NotNow;
-                if (await builder.OpenDialogue(_mainWindow))
-                {
-                    _uiService.OpenRepatchMenu(mod.ModLoader);
-                }
+                await builder.OpenDialogue(_mainWindow);
 
                 return true;
             }

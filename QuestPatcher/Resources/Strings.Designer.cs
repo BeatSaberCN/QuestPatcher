@@ -573,17 +573,8 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Repatch.
-        /// </summary>
-        public static string Mod_WrongModLoader_Repatch {
-            get {
-                return ResourceManager.GetString("Mod_WrongModLoader_Repatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The mod you are trying to install needs the mod loader {0}. However, your app has the mod loader {1} installed.
-        ///Would you like to repatch your app with the required modloader?.
+        ///You can change the mod loader by pressing &quot;Repatch App&quot; on the Tools page.
         /// </summary>
         public static string Mod_WrongModLoader_Text {
             get {

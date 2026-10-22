@@ -358,12 +358,12 @@ namespace QuestPatcher.ViewModels.ModBrowser
 
                 return await dialog.OpenDialogue(_window);
             }
-            catch (ModLoaderMismatchException)
+            catch (ModLoaderMismatchException e)
             {
                 var dialog = new DialogBuilder
                 {
-                    Title = "不匹配的Mod注入器",
-                    Text = "正在尝试安装的Mod需要的Mod注入器和当前使用的Mod注入器不匹配\n可以在工具页面点击 “重新打补丁” 来更换Mod注入器",
+                    Title = Strings.Mod_WrongModLoader_Title,
+                    Text = string.Format(Strings.Mod_WrongModLoader_Text, e.ModLoader, e.InstalledModLoader),
                     HideCancelButton = true
                 };
                 await dialog.OpenDialogue(_window);

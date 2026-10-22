@@ -318,10 +318,7 @@
     </data>
     <data name="Mod_WrongModLoader_Text" xml:space="preserve">
         <value>您正在安装的模组需要 {0} 注入器，但您的游戏是使用 {1} 打的补丁。
-要使用所需的注入器重新打补丁吗?</value>
-    </data>
-    <data name="Mod_WrongModLoader_Repatch" xml:space="preserve">
-        <value>重打补丁</value>
+可以在工具页面点击 “重新打补丁” 来更换Mod注入器</value>
     </data>
     <data name="Generic_NotNow" xml:space="preserve">
         <value>不是现在</value>
