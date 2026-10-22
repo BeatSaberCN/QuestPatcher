@@ -66,7 +66,6 @@ namespace QuestPatcher.Zip
         public ICollection<string> Entries => _centralDirectoryRecords.Keys;
 
         private readonly Dictionary<string, CentralDirectoryFileHeader> _centralDirectoryRecords;
-        private Dictionary<string, string>? _existingHashes;
         private long _postFilesOffset;
         private readonly Stream _stream;
         private readonly ZipMemory _memory;
@@ -153,11 +152,6 @@ namespace QuestPatcher.Zip
 
 
             var apkZip = new ApkZip(centralDirectoryRecords, postFilesOffset, stream, memory);
-            if (stream.CanWrite)
-            {
-                // Load the digests of each file from the signature. When we re-sign the APK later, we then only need to hash the changed files.
-                apkZip._existingHashes = JarSigner.CollectExistingHashes(apkZip);
-            }
 
             // Delete the existing eocd and central directory.
             // This isn't strictly necessary, and we could also just append our new files and then a new central directory
@@ -230,10 +224,6 @@ namespace QuestPatcher.Zip
             stream.Position = 0;
 
             var apkZip = new ApkZip(centralDirectoryRecords, postFilesOffset, stream, memory);
-            if (stream.CanWrite)
-            {
-                apkZip._existingHashes = await JarSigner.CollectExistingHashesAsync(apkZip, ct);
-            }
 
             if (stream.CanWrite)
             {
@@ -289,7 +279,6 @@ namespace QuestPatcher.Zip
             {
                 throw new InvalidOperationException("Attempted to delete a file in a readonly ZIP file");
             }
-            _existingHashes?.Remove(fileName);
             return _centralDirectoryRecords.Remove(fileName);
         }
 
@@ -736,9 +725,9 @@ namespace QuestPatcher.Zip
 
         private void Save()
         {
+            // Only a v2 signature is written. The original v1 files in META-INF are left untouched:
+            // replacing them makes the Quest show its "Restore App" prompt.
             // _certificate and _privateKey are non-null due to the default certificate assigned in the constructor.
-            JarSigner.SignApkFile(this, _certificate!, _privateKey!, _existingHashes);
-
             _stream.Position = _postFilesOffset;
             V2Signer.SignAndCompleteZipFile(_centralDirectoryRecords.Values, _stream, _certificate!, _privateKey!);
         }
@@ -767,7 +756,7 @@ namespace QuestPatcher.Zip
             }
             finally
             {
-                // Do not dispose until this point, as JarSigner needs to be able to add the signature files to the APK, and for that the ApkZip must not be disposed.
+                // Do not dispose until this point, as signing needs to read the entries of the APK.
                 _disposed = true;
                 _stream.Dispose();
             }
