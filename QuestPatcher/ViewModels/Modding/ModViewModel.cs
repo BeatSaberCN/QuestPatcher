@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -152,6 +153,19 @@ namespace QuestPatcher.ViewModels.Modding
             {
                 await Mod.Install();
             }
+            // Installing dependencies can replace an installed version of them
+            catch (ModDowngradeException ex)
+            {
+                var message = string.Format(Strings.Mod_Downgrade_Error, ex.ModId, ex.ExistingVersion, ex.NewVersion);
+                await ShowFailDialog(Strings.Mod_InstallFailed, ex, message);
+            }
+            catch (ModDependencyConflictException ex)
+            {
+                var lines = ex.Conflicts.Select(conflict => string.Format(Strings.Mod_DependencyConflict_Detail, conflict.DependantId, conflict.VersionRange, ex.ModId, ex.NewVersion));
+                var message = string.Format(Strings.Mod_DependencyConflict_Error, ex.ModId, ex.NewVersion) + "\n" +
+                              string.Join("\n", lines);
+                await ShowFailDialog(Strings.Mod_InstallFailed, ex, message);
+            }
             catch (Exception ex)
             {
                 await ShowFailDialog(Strings.Mod_InstallFailed, ex);
@@ -252,12 +266,12 @@ namespace QuestPatcher.ViewModels.Modding
         /// </summary>
         /// <param name="title">Title of the dialog</param>
         /// <param name="ex">Exception to display</param>
-        private async Task ShowFailDialog(string title, Exception ex)
+        private async Task ShowFailDialog(string title, Exception ex, string? message = null)
         {
             var builder = new DialogBuilder
             {
                 Title = title,
-                Text = ex.Message,
+                Text = message ?? ex.Message,
                 HideCancelButton = true
             };
 

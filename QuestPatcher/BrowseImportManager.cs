@@ -342,7 +342,16 @@ namespace QuestPatcher
                 // Don't display the full stack trace for InstallationExceptions, since these are thrown by QP and are not bugs/issues
                 if (ex is InstallationException)
                 {
-                    builder.Text = String.Format(Strings.BrowseImport_ImportFailed_Single_Exception_Text, fileName, ex.Message);
+                    // The import failures are collected first, so the typed errors are told apart here instead of in catch blocks
+                    var reason = ex switch
+                    {
+                        ModWrongAppException e => string.Format(Strings.Mod_WrongApp_Error, e.PackageId, e.AppId),
+                        ModDowngradeException e => string.Format(Strings.Mod_Downgrade_Error, e.ModId, e.ExistingVersion, e.NewVersion),
+                        ModDependencyConflictException e => string.Format(Strings.Mod_DependencyConflict_Error, e.ModId, e.NewVersion) + "\n" +
+                            string.Join("\n", e.Conflicts.Select(conflict => string.Format(Strings.Mod_DependencyConflict_Detail, conflict.DependantId, conflict.VersionRange, e.ModId, e.NewVersion))),
+                        _ => ex.Message
+                    };
+                    builder.Text = String.Format(Strings.BrowseImport_ImportFailed_Single_Exception_Text, fileName, reason);
                 }
                 else
                 {
@@ -634,8 +643,31 @@ namespace QuestPatcher
                 await dialog.OpenDialogue(_mainWindow);
                 return false;
             }
+            catch (ModDowngradeException e)
+            {
+                var dialog = new DialogBuilder
+                {
+                    Title = Strings.Mod_InstallFailed,
+                    Text = string.Format(Strings.Mod_Downgrade_Error, e.ModId, e.ExistingVersion, e.NewVersion),
+                    HideCancelButton = true
+                };
+                await dialog.OpenDialogue(_mainWindow);
+                return false;
+            }
+            catch (ModDependencyConflictException e)
+            {
+                var lines = e.Conflicts.Select(conflict => string.Format(Strings.Mod_DependencyConflict_Detail, conflict.DependantId, conflict.VersionRange, e.ModId, e.NewVersion));
+                var dialog = new DialogBuilder
+                {
+                    Title = Strings.Mod_InstallFailed,
+                    Text = string.Format(Strings.Mod_DependencyConflict_Error, e.ModId, e.NewVersion) + "\n" + string.Join("\n", lines),
+                    HideCancelButton = true
+                };
+                await dialog.OpenDialogue(_mainWindow);
+                return false;
+            }
         }
-        
+
         /// <summary>
         /// Imports then installs a mod.
         /// Will prompt to ask the user if they want to install the mod in the case that it is outdated

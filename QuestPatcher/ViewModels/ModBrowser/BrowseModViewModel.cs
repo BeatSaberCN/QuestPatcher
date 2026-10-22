@@ -12,6 +12,7 @@ using QuestPatcher.Core.ModBrowser.Models;
 using QuestPatcher.Core.Modding;
 using QuestPatcher.Core.Models;
 using QuestPatcher.Models;
+using QuestPatcher.Resources;
 using ReactiveUI;
 using Serilog;
 
@@ -363,6 +364,29 @@ namespace QuestPatcher.ViewModels.ModBrowser
                 {
                     Title = "不匹配的Mod注入器",
                     Text = "正在尝试安装的Mod需要的Mod注入器和当前使用的Mod注入器不匹配\n可以在工具页面点击 “重新打补丁” 来更换Mod注入器",
+                    HideCancelButton = true
+                };
+                await dialog.OpenDialogue(_window);
+                return false;
+            }
+            catch (ModDowngradeException e)
+            {
+                var dialog = new DialogBuilder
+                {
+                    Title = Strings.Mod_InstallFailed,
+                    Text = string.Format(Strings.Mod_Downgrade_Error, e.ModId, e.ExistingVersion, e.NewVersion),
+                    HideCancelButton = true
+                };
+                await dialog.OpenDialogue(_window);
+                return false;
+            }
+            catch (ModDependencyConflictException e)
+            {
+                var lines = e.Conflicts.Select(conflict => string.Format(Strings.Mod_DependencyConflict_Detail, conflict.DependantId, conflict.VersionRange, e.ModId, e.NewVersion));
+                var dialog = new DialogBuilder
+                {
+                    Title = Strings.Mod_InstallFailed,
+                    Text = string.Format(Strings.Mod_DependencyConflict_Error, e.ModId, e.NewVersion) + "\n" + string.Join("\n", lines),
                     HideCancelButton = true
                 };
                 await dialog.OpenDialogue(_window);

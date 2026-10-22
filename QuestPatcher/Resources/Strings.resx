@@ -645,4 +645,16 @@ NOTE: If you see a restore app prompt inside your headset, just press close. The
   <data name="Tools_Option_AllowModDowngrade_Description" xml:space="preserve">
     <value>Allows installing an older version of an installed mod (default on)</value>
   </data>
+  <data name="Mod_WrongApp_Error" xml:space="preserve">
+    <value>Mod is intended for app {0}, but {1} is selected</value>
+  </data>
+  <data name="Mod_Downgrade_Error" xml:space="preserve">
+    <value>Version of existing {0} ({1}) is greater than installing version ({2}). Direct version downgrades are not permitted</value>
+  </data>
+  <data name="Mod_DependencyConflict_Error" xml:space="preserve">
+    <value>Failed to upgrade installation of mod {0} to {1}: </value>
+  </data>
+  <data name="Mod_DependencyConflict_Detail" xml:space="preserve">
+    <value>Dependency of mod {0} requires version range {1} of {2}, however the version of {2} being upgraded to ({3}) does not intersect this range</value>
+  </data>
 </root>

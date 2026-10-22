@@ -474,6 +474,33 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dependency of mod {0} requires version range {1} of {2}, however the version of {2} being upgraded to ({3}) does not intersect this range.
+        /// </summary>
+        public static string Mod_DependencyConflict_Detail {
+            get {
+                return ResourceManager.GetString("Mod_DependencyConflict_Detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to upgrade installation of mod {0} to {1}: .
+        /// </summary>
+        public static string Mod_DependencyConflict_Error {
+            get {
+                return ResourceManager.GetString("Mod_DependencyConflict_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version of existing {0} ({1}) is greater than installing version ({2}). Direct version downgrades are not permitted.
+        /// </summary>
+        public static string Mod_Downgrade_Error {
+            get {
+                return ResourceManager.GetString("Mod_Downgrade_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to install mod.
         /// </summary>
         public static string Mod_InstallFailed {
@@ -533,6 +560,15 @@ namespace QuestPatcher.Resources {
         public static string Mod_UninstallFailed {
             get {
                 return ResourceManager.GetString("Mod_UninstallFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod is intended for app {0}, but {1} is selected.
+        /// </summary>
+        public static string Mod_WrongApp_Error {
+            get {
+                return ResourceManager.GetString("Mod_WrongApp_Error", resourceCulture);
             }
         }
         
