@@ -474,6 +474,33 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dependency of mod {0} requires version range {1} of {2}, however the version of {2} being upgraded to ({3}) does not intersect this range.
+        /// </summary>
+        public static string Mod_DependencyConflict_Detail {
+            get {
+                return ResourceManager.GetString("Mod_DependencyConflict_Detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to upgrade installation of mod {0} to {1}: .
+        /// </summary>
+        public static string Mod_DependencyConflict_Error {
+            get {
+                return ResourceManager.GetString("Mod_DependencyConflict_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version of existing {0} ({1}) is greater than installing version ({2}). Direct version downgrades are not permitted.
+        /// </summary>
+        public static string Mod_Downgrade_Error {
+            get {
+                return ResourceManager.GetString("Mod_Downgrade_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to install mod.
         /// </summary>
         public static string Mod_InstallFailed {
@@ -537,17 +564,17 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Repatch.
+        ///   Looks up a localized string similar to Mod is intended for app {0}, but {1} is selected.
         /// </summary>
-        public static string Mod_WrongModLoader_Repatch {
+        public static string Mod_WrongApp_Error {
             get {
-                return ResourceManager.GetString("Mod_WrongModLoader_Repatch", resourceCulture);
+                return ResourceManager.GetString("Mod_WrongApp_Error", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The mod you are trying to install needs the mod loader {0}. However, your app has the mod loader {1} installed.
-        ///Would you like to repatch your app with the required modloader?.
+        ///You can change the mod loader by pressing &quot;Repatch App&quot; on the Tools page.
         /// </summary>
         public static string Mod_WrongModLoader_Text {
             get {
@@ -1274,6 +1301,24 @@ namespace QuestPatcher.Resources {
         public static string SideBarHeader_Patching {
             get {
                 return ResourceManager.GetString("SideBarHeader_Patching", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow Mod Downgrades.
+        /// </summary>
+        public static string Tools_Option_AllowModDowngrade {
+            get {
+                return ResourceManager.GetString("Tools_Option_AllowModDowngrade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows installing an older version of an installed mod (default on).
+        /// </summary>
+        public static string Tools_Option_AllowModDowngrade_Description {
+            get {
+                return ResourceManager.GetString("Tools_Option_AllowModDowngrade_Description", resourceCulture);
             }
         }
         

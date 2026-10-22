@@ -457,10 +457,7 @@ NOTE: All save data, custom maps and cosmetics will remain safe!</value>
   </data>
   <data name="Mod_WrongModLoader_Text" xml:space="preserve">
     <value>The mod you are trying to install needs the mod loader {0}. However, your app has the mod loader {1} installed.
-Would you like to repatch your app with the required modloader?</value>
-  </data>
-  <data name="Mod_WrongModLoader_Repatch" xml:space="preserve">
-    <value>Repatch</value>
+You can change the mod loader by pressing "Repatch App" on the Tools page</value>
   </data>
   <data name="Generic_NotNow" xml:space="preserve">
     <value>Not now</value>
@@ -638,5 +635,23 @@ NOTE: If you see a restore app prompt inside your headset, just press close. The
   </data>
   <data name="PatchingStage_InstallCoreMods" xml:space="preserve">
       <value>(8/8) Installing core mods</value>
+  </data>
+  <data name="Tools_Option_AllowModDowngrade" xml:space="preserve">
+    <value>Allow Mod Downgrades</value>
+  </data>
+  <data name="Tools_Option_AllowModDowngrade_Description" xml:space="preserve">
+    <value>Allows installing an older version of an installed mod (default on)</value>
+  </data>
+  <data name="Mod_WrongApp_Error" xml:space="preserve">
+    <value>Mod is intended for app {0}, but {1} is selected</value>
+  </data>
+  <data name="Mod_Downgrade_Error" xml:space="preserve">
+    <value>Version of existing {0} ({1}) is greater than installing version ({2}). Direct version downgrades are not permitted</value>
+  </data>
+  <data name="Mod_DependencyConflict_Error" xml:space="preserve">
+    <value>Failed to upgrade installation of mod {0} to {1}: </value>
+  </data>
+  <data name="Mod_DependencyConflict_Detail" xml:space="preserve">
+    <value>Dependency of mod {0} requires version range {1} of {2}, however the version of {2} being upgraded to ({3}) does not intersect this range</value>
   </data>
 </root>

@@ -79,7 +79,7 @@ namespace QuestPatcher.Services
             _operationLocker = new();
             _operationLocker.StartOperation(); // Still loading
             _browseManager = new BrowseImportManager(OtherFilesManager, ModManager, window, InstallManager,
-                _operationLocker, this, FilesDownloader, SpecialFolders, CoreModManager);
+                _operationLocker, FilesDownloader, SpecialFolders, CoreModManager);
             ProgressViewModel progressViewModel = new(_operationLocker, FilesDownloader);
             _otherItemsView = new OtherItemsViewModel(OtherFilesManager, window, _browseManager, _operationLocker, progressViewModel);
             _patchingView = new PatchingViewModel(Config, _operationLocker, PatchingManager, InstallManager,

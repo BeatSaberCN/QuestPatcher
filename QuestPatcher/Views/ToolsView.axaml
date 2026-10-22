@@ -95,6 +95,10 @@
                         IsCheckedChanged="ExpertModeToggle_OnIsCheckedChanged" />
           <TextBlock VerticalAlignment="Center" FontSize="12" Text="允许更改一些高级设置" />
         </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10" IsEnabled="{Binding Config.ExpertMode}">
+          <ToggleButton IsChecked="{Binding Config.AllowModDowngrade}" Content="{x:Static res:Strings.Tools_Option_AllowModDowngrade}" />
+          <TextBlock VerticalAlignment="Center" FontSize="12" Text="{x:Static res:Strings.Tools_Option_AllowModDowngrade_Description}" />
+        </StackPanel>
       </StackPanel>
         <StackPanel Margin="0 20 0 0" Spacing="10">
             <StackPanel Orientation="Horizontal" Spacing="20">

@@ -31,7 +31,6 @@ namespace QuestPatcher
         private readonly InstallManager _installManager;
         private readonly ExternalFilesDownloader _filesDownloader;
         private readonly OperationLocker _locker;
-        private readonly QuestPatcherUiService _uiService;
         private readonly SpecialFolders _specialFolders;
         private readonly CoreModsManager _coreModsManager;
 
@@ -43,7 +42,7 @@ namespace QuestPatcher
         private Queue<FileImportInfo>? _currentImportQueue;
 
         public BrowseImportManager(OtherFilesManager otherFilesManager, ModManager modManager, Window mainWindow,
-            InstallManager installManager, OperationLocker locker, QuestPatcherUiService uiService,
+            InstallManager installManager, OperationLocker locker,
             ExternalFilesDownloader filesDownloader, SpecialFolders specialFolders, CoreModsManager coreModsManager)
         {
             _otherFilesManager = otherFilesManager;
@@ -51,7 +50,6 @@ namespace QuestPatcher
             _mainWindow = mainWindow;
             _installManager = installManager;
             _locker = locker;
-            _uiService = uiService;
             _filesDownloader = filesDownloader;
             _specialFolders = specialFolders;
             _coreModsManager = coreModsManager;
@@ -342,7 +340,16 @@ namespace QuestPatcher
                 // Don't display the full stack trace for InstallationExceptions, since these are thrown by QP and are not bugs/issues
                 if (ex is InstallationException)
                 {
-                    builder.Text = String.Format(Strings.BrowseImport_ImportFailed_Single_Exception_Text, fileName, ex.Message);
+                    // The import failures are collected first, so the typed errors are told apart here instead of in catch blocks
+                    var reason = ex switch
+                    {
+                        ModWrongAppException e => string.Format(Strings.Mod_WrongApp_Error, e.PackageId, e.AppId),
+                        ModDowngradeException e => string.Format(Strings.Mod_Downgrade_Error, e.ModId, e.ExistingVersion, e.NewVersion),
+                        ModDependencyConflictException e => string.Format(Strings.Mod_DependencyConflict_Error, e.ModId, e.NewVersion) + "\n" +
+                            string.Join("\n", e.Conflicts.Select(conflict => string.Format(Strings.Mod_DependencyConflict_Detail, conflict.DependantId, conflict.VersionRange, e.ModId, e.NewVersion))),
+                        _ => ex.Message
+                    };
+                    builder.Text = String.Format(Strings.BrowseImport_ImportFailed_Single_Exception_Text, fileName, reason);
                 }
                 else
                 {
@@ -623,19 +630,42 @@ namespace QuestPatcher
                 await _coreModsManager.InstallCoreModsAsync(mods, curModLoader.Value);
                 return true;
             }
-            catch (InstallationException e) when (e.Message.Contains("Mod loader mis-match"))
+            catch (ModLoaderMismatchException e)
             {
                 var dialog = new DialogBuilder
                 {
-                    Title = "不匹配的Mod注入器",
-                    Text = "正在尝试安装的Mod需要的Mod注入器和当前使用的Mod注入器不匹配\n可以在工具页面点击 “重新打补丁” 来更换Mod注入器",
+                    Title = Strings.Mod_WrongModLoader_Title,
+                    Text = string.Format(Strings.Mod_WrongModLoader_Text, e.ModLoader, e.InstalledModLoader),
+                    HideCancelButton = true
+                };
+                await dialog.OpenDialogue(_mainWindow);
+                return false;
+            }
+            catch (ModDowngradeException e)
+            {
+                var dialog = new DialogBuilder
+                {
+                    Title = Strings.Mod_InstallFailed,
+                    Text = string.Format(Strings.Mod_Downgrade_Error, e.ModId, e.ExistingVersion, e.NewVersion),
+                    HideCancelButton = true
+                };
+                await dialog.OpenDialogue(_mainWindow);
+                return false;
+            }
+            catch (ModDependencyConflictException e)
+            {
+                var lines = e.Conflicts.Select(conflict => string.Format(Strings.Mod_DependencyConflict_Detail, conflict.DependantId, conflict.VersionRange, e.ModId, e.NewVersion));
+                var dialog = new DialogBuilder
+                {
+                    Title = Strings.Mod_InstallFailed,
+                    Text = string.Format(Strings.Mod_DependencyConflict_Error, e.ModId, e.NewVersion) + "\n" + string.Join("\n", lines),
                     HideCancelButton = true
                 };
                 await dialog.OpenDialogue(_mainWindow);
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Imports then installs a mod.
         /// Will prompt to ask the user if they want to install the mod in the case that it is outdated
@@ -657,14 +687,10 @@ namespace QuestPatcher
                 var builder = new DialogBuilder
                 {
                     Title = Strings.Mod_WrongModLoader_Title,
-                    Text = String.Format(Strings.Mod_WrongModLoader_Text, mod.ModLoader, _installManager.InstalledApp?.ModLoader)
+                    Text = String.Format(Strings.Mod_WrongModLoader_Text, mod.ModLoader, _installManager.InstalledApp?.ModLoader),
+                    HideCancelButton = true
                 };
-                builder.OkButton.Text = Strings.Mod_WrongModLoader_Repatch;
-                builder.CancelButton.Text = Strings.Generic_NotNow;
-                if (await builder.OpenDialogue(_mainWindow))
-                {
-                    _uiService.OpenRepatchMenu(mod.ModLoader);
-                }
+                await builder.OpenDialogue(_mainWindow);
 
                 return true;
             }

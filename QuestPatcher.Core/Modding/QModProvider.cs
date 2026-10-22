@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using QuestPatcher.Core.Models;
@@ -48,7 +47,8 @@ namespace QuestPatcher.Core.Modding
             Log.Information("Mod ID: {ModId}, Version: {ModVersion}, Is Library: {IsLibrary}", qmod.Id, qmod.Version, qmod.IsLibrary);
             if (qmod.PackageId != null && qmod.PackageId != _config.AppId)
             {
-                throw new InstallationException($"该Mod适用于{qmod.PackageId}，与你目前要Mod的应用{_config.AppId}不兼容。");
+                Log.Error("Mod is intended for app {PackageId}, but {AppId} is selected", qmod.PackageId, _config.AppId);
+                throw new ModWrongAppException(qmod.PackageId, _config.AppId);
             }
 
             var mod = new QPMod(this, qmod.GetManifest(), _debugBridge, _filesDownloader, _modManager);
@@ -62,9 +62,11 @@ namespace QuestPatcher.Core.Modding
                 {
                     Log.Warning("Version of existing {ModId} is the same as the installing version ({InstallingVersion})", existingInstall.Id, mod.Version);
                 }
-                if (false&&existingInstall.Version > qmod.Version) // Agrees downgrade @MicroBlock
+                if (existingInstall.Version > qmod.Version && _config.ExpertMode && !_config.AllowModDowngrade)
                 {
-                    throw new InstallationException($"现有的Mod {existingInstall.Id}({existingInstall.Version}) 版本要高于你正在安装的版本 ({mod.Version}) 。不允许直接降级安装。");
+                    Log.Error("Version of existing {ModId} ({ExistingVersion}) is greater than installing version ({InstallingVersion}). Direct version downgrades are not permitted",
+                        existingInstall.Id, existingInstall.Version, mod.Version);
+                    throw new ModDowngradeException(existingInstall.Id, existingInstall.Version, mod.Version);
                 }
                 // Uninstall the existing mod. May throw an exception if other mods depend on the older version
                 needImmediateInstall = await PrepareVersionChange(existingInstall, mod);
@@ -183,7 +185,7 @@ namespace QuestPatcher.Core.Modding
                 {
                     Log.Error("Failed to parse legacy mod at {ModPath}. \nThe mod has been skipped and the folder will be deleted to avoid future issues.", legacyFolder);
                     await _debugBridge.RemoveDirectory(legacyFolder);
-                    
+
                     Log.Debug(ex, "Mod load failure stack trace");
                 }
             }
@@ -258,9 +260,7 @@ namespace QuestPatcher.Core.Modding
             Debug.Assert(currentlyInstalled.Id == newVersion.Id);
             Log.Information("Attempting to upgrade {ModId} v{CurrentVersion} to v{NewVersion}", currentlyInstalled.Id, currentlyInstalled.Version, newVersion.Version);
 
-            bool didFailToMatch = false;
-            StringBuilder errorBuilder = new();
-            errorBuilder.AppendLine($"无法将{currentlyInstalled.Id}升级至{newVersion.Version}：");
+            var conflicts = new List<DependencyConflict>();
             bool installedDependants = false;
             foreach (var mod in ModsById.Values)
             {
@@ -279,19 +279,18 @@ namespace QuestPatcher.Core.Modding
                         }
                         else
                         {
-                            string errorLine = $"{mod.Id}依赖于{dependency.VersionRange}版本范围的{currentlyInstalled.Id}，然而正要安装的{currentlyInstalled.Id}在升级到{newVersion.Version}后将不再属于该范围，无法兼容{mod.Id}。 ";
-                            errorBuilder.AppendLine(errorLine);
-
-                            Log.Error(errorLine);
-                            didFailToMatch = true;
+                            Log.Error("Dependency of mod {DependantId} requires version range {VersionRange} of {ModId}, however the version of {UpgradingModId} being upgraded to ({NewVersion}) does not intersect this range",
+                                mod.Id, dependency.VersionRange, currentlyInstalled.Id, currentlyInstalled.Id, newVersion.Version);
+                            conflicts.Add(new DependencyConflict(mod.Id, dependency.VersionRange));
                         }
                     }
                 }
             }
 
-            if (didFailToMatch)
+            if (conflicts.Count > 0)
             {
-                throw new InstallationException(errorBuilder.ToString());
+                Log.Error("Failed to upgrade installation of mod {ModId} to {NewVersion}", currentlyInstalled.Id, newVersion.Version);
+                throw new ModDependencyConflictException(currentlyInstalled.Id, newVersion.Version, conflicts);
             }
             else
             {
