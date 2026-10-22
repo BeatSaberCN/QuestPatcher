@@ -75,9 +75,23 @@ namespace QuestPatcher.Core.Models
                     PatchingOptions.CleanUpMods = true;
                     PatchingOptions.AllowDowngrade = true;
                     PatchingOptions.InstallCoreMods = true;
+                    AllowModDowngrade = true;
                 }
             }
         }
+
+        public bool AllowModDowngrade
+        {
+            get;
+            set
+            {
+                if (value != field)
+                {
+                    field = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        } = true;
 
         public string SelectedThemeName { get; set; } = "Dark";
 

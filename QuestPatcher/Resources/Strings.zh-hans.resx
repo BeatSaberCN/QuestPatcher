@@ -524,4 +524,10 @@
     <data name="PatchingStage_InstallCoreMods" xml:space="preserve">
         <value>(8/8) 安装核心Mod</value>
     </data>
+    <data name="Tools_Option_AllowModDowngrade" xml:space="preserve">
+        <value>允许降级Mod</value>
+    </data>
+    <data name="Tools_Option_AllowModDowngrade_Description" xml:space="preserve">
+        <value>允许安装比已安装版本更旧的Mod (默认开启)</value>
+    </data>
 </root>

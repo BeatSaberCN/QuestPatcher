@@ -1278,6 +1278,24 @@ namespace QuestPatcher.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow Mod Downgrades.
+        /// </summary>
+        public static string Tools_Option_AllowModDowngrade {
+            get {
+                return ResourceManager.GetString("Tools_Option_AllowModDowngrade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows installing an older version of an installed mod (default on).
+        /// </summary>
+        public static string Tools_Option_AllowModDowngrade_Description {
+            get {
+                return ResourceManager.GetString("Tools_Option_AllowModDowngrade_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         public static string Tools_Option_Language {

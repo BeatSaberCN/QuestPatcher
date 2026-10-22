@@ -639,4 +639,10 @@ NOTE: If you see a restore app prompt inside your headset, just press close. The
   <data name="PatchingStage_InstallCoreMods" xml:space="preserve">
       <value>(8/8) Installing core mods</value>
   </data>
+  <data name="Tools_Option_AllowModDowngrade" xml:space="preserve">
+    <value>Allow Mod Downgrades</value>
+  </data>
+  <data name="Tools_Option_AllowModDowngrade_Description" xml:space="preserve">
+    <value>Allows installing an older version of an installed mod (default on)</value>
+  </data>
 </root>

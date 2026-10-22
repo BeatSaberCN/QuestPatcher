@@ -62,9 +62,11 @@ namespace QuestPatcher.Core.Modding
                 {
                     Log.Warning("Version of existing {ModId} is the same as the installing version ({InstallingVersion})", existingInstall.Id, mod.Version);
                 }
-                if (false&&existingInstall.Version > qmod.Version) // Agrees downgrade @MicroBlock
+                if (existingInstall.Version > qmod.Version && _config.ExpertMode && !_config.AllowModDowngrade)
                 {
-                    throw new InstallationException($"现有的Mod {existingInstall.Id}({existingInstall.Version}) 版本要高于你正在安装的版本 ({mod.Version}) 。不允许直接降级安装。");
+                    Log.Error("Version of existing {ModId} ({ExistingVersion}) is greater than installing version ({InstallingVersion}). Direct version downgrades are not permitted",
+                        existingInstall.Id, existingInstall.Version, mod.Version);
+                    throw new ModDowngradeException(existingInstall.Id, existingInstall.Version, mod.Version);
                 }
                 // Uninstall the existing mod. May throw an exception if other mods depend on the older version
                 needImmediateInstall = await PrepareVersionChange(existingInstall, mod);
@@ -183,7 +185,7 @@ namespace QuestPatcher.Core.Modding
                 {
                     Log.Error("Failed to parse legacy mod at {ModPath}. \nThe mod has been skipped and the folder will be deleted to avoid future issues.", legacyFolder);
                     await _debugBridge.RemoveDirectory(legacyFolder);
-                    
+
                     Log.Debug(ex, "Mod load failure stack trace");
                 }
             }

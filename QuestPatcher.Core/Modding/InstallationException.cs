@@ -32,6 +32,24 @@ namespace QuestPatcher.Core.Modding
     }
 
     /// <summary>
+    /// Thrown when installing an older version of an installed mod while mod downgrades are blocked.
+    /// </summary>
+    public class ModDowngradeException : InstallationException
+    {
+        public string ModId { get; }
+        public Version ExistingVersion { get; }
+        public Version NewVersion { get; }
+
+        public ModDowngradeException(string modId, Version existingVersion, Version newVersion)
+            : base($"Version of existing {modId} ({existingVersion}) is greater than installing version ({newVersion}). Direct version downgrades are not permitted")
+        {
+            ModId = modId;
+            ExistingVersion = existingVersion;
+            NewVersion = newVersion;
+        }
+    }
+
+    /// <summary>
     /// A mod that depends on a version range of another mod, which the new version of that mod is not in.
     /// </summary>
     public record DependencyConflict(string DependantId, SemanticVersioning.Range VersionRange);
