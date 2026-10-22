@@ -736,9 +736,9 @@ namespace QuestPatcher.Zip
 
         private void Save()
         {
+            // Only the v2 signature is written, like MBF does. Android ignores v1 when a v2 block exists,
+            // and leaving the original META-INF files untouched avoids the Quest's "Restore App" prompt.
             // _certificate and _privateKey are non-null due to the default certificate assigned in the constructor.
-            JarSigner.SignApkFile(this, _certificate!, _privateKey!, _existingHashes);
-
             _stream.Position = _postFilesOffset;
             V2Signer.SignAndCompleteZipFile(_centralDirectoryRecords.Values, _stream, _certificate!, _privateKey!);
         }
