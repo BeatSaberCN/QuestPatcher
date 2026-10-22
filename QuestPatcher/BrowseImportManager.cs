@@ -623,7 +623,7 @@ namespace QuestPatcher
                 await _coreModsManager.InstallCoreModsAsync(mods, curModLoader.Value);
                 return true;
             }
-            catch (InstallationException e) when (e.Message.Contains("Mod loader mis-match"))
+            catch (ModLoaderMismatchException)
             {
                 var dialog = new DialogBuilder
                 {

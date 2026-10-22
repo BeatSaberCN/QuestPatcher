@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using QuestPatcher.Core.Models;
@@ -48,7 +47,8 @@ namespace QuestPatcher.Core.Modding
             Log.Information("Mod ID: {ModId}, Version: {ModVersion}, Is Library: {IsLibrary}", qmod.Id, qmod.Version, qmod.IsLibrary);
             if (qmod.PackageId != null && qmod.PackageId != _config.AppId)
             {
-                throw new InstallationException($"该Mod适用于{qmod.PackageId}，与你目前要Mod的应用{_config.AppId}不兼容。");
+                Log.Error("Mod is intended for app {PackageId}, but {AppId} is selected", qmod.PackageId, _config.AppId);
+                throw new ModWrongAppException(qmod.PackageId, _config.AppId);
             }
 
             var mod = new QPMod(this, qmod.GetManifest(), _debugBridge, _filesDownloader, _modManager);
@@ -258,9 +258,7 @@ namespace QuestPatcher.Core.Modding
             Debug.Assert(currentlyInstalled.Id == newVersion.Id);
             Log.Information("Attempting to upgrade {ModId} v{CurrentVersion} to v{NewVersion}", currentlyInstalled.Id, currentlyInstalled.Version, newVersion.Version);
 
-            bool didFailToMatch = false;
-            StringBuilder errorBuilder = new();
-            errorBuilder.AppendLine($"无法将{currentlyInstalled.Id}升级至{newVersion.Version}：");
+            var conflicts = new List<DependencyConflict>();
             bool installedDependants = false;
             foreach (var mod in ModsById.Values)
             {
@@ -279,19 +277,18 @@ namespace QuestPatcher.Core.Modding
                         }
                         else
                         {
-                            string errorLine = $"{mod.Id}依赖于{dependency.VersionRange}版本范围的{currentlyInstalled.Id}，然而正要安装的{currentlyInstalled.Id}在升级到{newVersion.Version}后将不再属于该范围，无法兼容{mod.Id}。 ";
-                            errorBuilder.AppendLine(errorLine);
-
-                            Log.Error(errorLine);
-                            didFailToMatch = true;
+                            Log.Error("Dependency of mod {DependantId} requires version range {VersionRange} of {ModId}, however the version of {UpgradingModId} being upgraded to ({NewVersion}) does not intersect this range",
+                                mod.Id, dependency.VersionRange, currentlyInstalled.Id, currentlyInstalled.Id, newVersion.Version);
+                            conflicts.Add(new DependencyConflict(mod.Id, dependency.VersionRange));
                         }
                     }
                 }
             }
 
-            if (didFailToMatch)
+            if (conflicts.Count > 0)
             {
-                throw new InstallationException(errorBuilder.ToString());
+                Log.Error("Failed to upgrade installation of mod {ModId} to {NewVersion}", currentlyInstalled.Id, newVersion.Version);
+                throw new ModDependencyConflictException(currentlyInstalled.Id, newVersion.Version, conflicts);
             }
             else
             {

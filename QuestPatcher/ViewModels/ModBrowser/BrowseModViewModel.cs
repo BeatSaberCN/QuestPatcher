@@ -357,7 +357,7 @@ namespace QuestPatcher.ViewModels.ModBrowser
 
                 return await dialog.OpenDialogue(_window);
             }
-            catch (InstallationException e) when (e.Message.Contains("Mod loader mis-match"))
+            catch (ModLoaderMismatchException)
             {
                 var dialog = new DialogBuilder
                 {
